@@ -411,16 +411,85 @@ class MahjongHelper:
             result += f"#{i}: {hand['name']}\n"
             result += f"Points Value: {hand['points']} points\n"
             result += f"Progress: {hand['matches']}/{hand['total_required']} tiles "
-            result += f"({hand['percentage']:.1f}%)\n"
-            result += f"Missing: {hand['missing']} tiles\n\n"
+            result += f"({hand['percentage']:.1f}%)\n\n"
             
-            result += "Required tiles:\n"
-            for tile, count in sorted(hand['required_tiles'].items()):
-                result += f"  • {tile}: {count}x\n"
+            # Show the line pattern and what they have
+            result += "The Line:\n"
+            result += self.format_line_pattern(hand['required_tiles'])
+            result += "\n\n"
+            
+            result += "What You Have:\n"
+            hand_counter = Counter(self.selected_tiles)
+            result += self.format_what_you_have(hand['required_tiles'], hand_counter)
+            result += "\n\n"
+            
+            result += "Missing:\n"
+            result += self.format_missing_tiles(hand['required_tiles'], hand_counter)
+            result += "\n"
             
             result += "\n" + "-" * 60 + "\n\n"
         
         return result
+    
+    def format_line_pattern(self, required_tiles):
+        """Format the required tiles as a line pattern using abbreviations"""
+        line = ""
+        for tile, count in sorted(required_tiles.items()):
+            abbrev = self.get_tile_abbreviation(tile)
+            line += abbrev * count + " "
+        return line.strip()
+    
+    def format_what_you_have(self, required_tiles, hand_counter):
+        """Show what tiles the player has with _ for missing tiles"""
+        line = ""
+        for tile, count in sorted(required_tiles.items()):
+            abbrev = self.get_tile_abbreviation(tile)
+            have_count = min(hand_counter.get(tile, 0), count)
+            missing_count = count - have_count
+            line += abbrev * have_count
+            line += "_" * missing_count
+            line += " "
+        return line.strip()
+    
+    def format_missing_tiles(self, required_tiles, hand_counter):
+        """Show only the missing tiles"""
+        missing = []
+        for tile, count in sorted(required_tiles.items()):
+            have_count = hand_counter.get(tile, 0)
+            if have_count < count:
+                abbrev = self.get_tile_abbreviation(tile)
+                missing.append(abbrev * (count - have_count))
+        
+        if not missing:
+            return "None - You have all tiles!"
+        return " ".join(missing)
+    
+    def get_tile_abbreviation(self, tile):
+        """Convert tile name to abbreviation for display"""
+        # Winds
+        if tile == "North Wind":
+            return "N"
+        elif tile == "East Wind":
+            return "E"
+        elif tile == "West Wind":
+            return "W"
+        elif tile == "South Wind":
+            return "S"
+        # Dragons
+        elif tile == "Red Dragon":
+            return "D"
+        elif tile == "Green Dragon":
+            return "D"
+        elif tile == "White Dragon":
+            return "D"
+        # Number tiles - extract number and first letter of suit
+        else:
+            parts = tile.split()
+            if len(parts) == 2:
+                number = parts[0]
+                suit = parts[1][0]  # First letter: B, C, or D
+                return f"{number}{suit}"
+            return tile
     
     def display_results(self, text):
         self.results_text.config(state=tk.NORMAL)
