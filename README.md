@@ -67,13 +67,13 @@ Add your Mahjong tile images to this folder. The images should be named accordin
 Navigate to the directory containing the script and run:
 
 ```bash
-python mahjong_helper.py
+python mahjong.py
 ```
 
 Or on some systems:
 
 ```bash
-python3 mahjong_helper.py
+python3 mahjong.py
 ```
 
 ## How to Use the Application
@@ -142,7 +142,7 @@ python3 mahjong_helper.py
 ```
 mahjong-helper/
 │
-├── mahjong_helper.py    # Main application file
+├── mahjong.py    # Main application file
 ├── images/              # Folder containing tile images
 │   ├── 1bam.png
 │   ├── 2bam.png
