@@ -4,22 +4,14 @@ from collections import Counter
 from itertools import combinations
 from PIL import Image, ImageTk
 import os
+from itertools import permutations
 
 # Define all possible Mahjong hands based on the official card
 MAHJONG_HANDS = []
 
 suits = ["Bamboo", "Character", "Dot"]
-
+dragons = ["Red Dragon", "Green Dragon", "White Dragon"]
 # ANY LIKE NUMBERS SECTION
-# FF 1111 D 1111 D 11 (Any 3 Suits)
-for num in range(1, 10):
-    for s1, s2, s3 in combinations(suits, 3):
-        MAHJONG_HANDS.append((
-            f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
-            ["Flower"]*2 + [f"{num} {s1}"]*4 + ["Red Dragon"] + [f"{num} {s2}"]*4 + 
-            ["Green Dragon"] + [f"{num} {s3}"]*2,
-            25
-        ))
 
 # FFFF 11 111 111 11 (Any 3 Suits, Pairs Must Be Same Suit)
 for num in range(1, 10):
@@ -29,6 +21,54 @@ for num in range(1, 10):
             ["Flower"]*4 + [f"{num} {s1}"]*2 + [f"{num} {s2}"]*3 + [f"{num} {s3}"]*3 + [f"{num} {s1}"]*2,
             30
         ))
+        # Add more permutations where pairs are in different suits
+        MAHJONG_HANDS.append((
+            f"FFFF {num}{num} {num}{num}{num} {num}{num}{num} {num}{num} - {s1}/{s2}/{s3}",
+            ["Flower"]*4 + [f"{num} {s2}"]*2 + [f"{num} {s1}"]*3 + [f"{num} {s3}"]*3 + [f"{num} {s2}"]*2,
+            30
+        ))
+        MAHJONG_HANDS.append((
+            f"FFFF {num}{num} {num}{num}{num} {num}{num}{num} {num}{num} - {s1}/{s2}/{s3}",
+            ["Flower"]*4 + [f"{num} {s3}"]*2 + [f"{num} {s1}"]*3 + [f"{num} {s2}"]*3 + [f"{num} {s3}"]*2,
+            30
+        ))
+        
+# FF 1111 D 1111 D 11 
+
+for num in range(1, 10):
+    for s1, s2, s3 in combinations(suits, 3):
+        for d1, d2 in combinations(dragons, 2):
+            # All 6 ways to arrange 4,4,2 across three suits
+            MAHJONG_HANDS.append((
+                f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s1}"]*4 + [d1] + [f"{num} {s2}"]*4 + [d2] + [f"{num} {s3}"]*2,
+                25
+            ))
+            MAHJONG_HANDS.append((
+                f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s1}"]*4 + [d1] + [f"{num} {s3}"]*4 + [d2] + [f"{num} {s2}"]*2,
+                25
+            ))
+            MAHJONG_HANDS.append((
+                f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s2}"]*4 + [d1] + [f"{num} {s1}"]*4 + [d2] + [f"{num} {s3}"]*2,
+                25
+            ))
+            MAHJONG_HANDS.append((
+                f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s2}"]*4 + [d1] + [f"{num} {s3}"]*4 + [d2] + [f"{num} {s1}"]*2,
+                25
+            ))
+            MAHJONG_HANDS.append((
+                f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s3}"]*4 + [d1] + [f"{num} {s1}"]*4 + [d2] + [f"{num} {s2}"]*2,
+                25
+            ))
+            MAHJONG_HANDS.append((
+                f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s3}"]*4 + [d1] + [f"{num} {s2}"]*4 + [d2] + [f"{num} {s1}"]*2,
+                25
+            ))
 
 # FF 111 111 111 DDD (Any 3 Suits, Any Dragon)
 for num in range(1, 10):
@@ -559,6 +599,19 @@ for s1, s2, s3 in combinations(suits, 3):
         30
     ))
 
+# Remove duplicate hands (same tiles, same points)
+seen = set()
+unique_hands = []
+for hand_name, tiles, points in MAHJONG_HANDS:
+    # Create a sortable representation of the tiles
+    tiles_tuple = tuple(sorted(tiles))
+    key = (tiles_tuple, points)
+    if key not in seen:
+        seen.add(key)
+        unique_hands.append((hand_name, tiles, points))
+
+MAHJONG_HANDS = unique_hands
+print(f"Total hands after deduplication: {len(MAHJONG_HANDS)}")
 
 class MahjongHelper:
     def __init__(self, root):
@@ -1100,11 +1153,11 @@ class MahjongHelper:
         elif tile == "South Wind":
             return "S"
         elif tile == "Red Dragon":
-            return "D"
+            return "RD"  # Changed from "D"
         elif tile == "Green Dragon":
-            return "D"
+            return "GD"  # Changed from "D"
         elif tile == "White Dragon":
-            return "D"
+            return "WD"  # Changed from "D" (or "0D" for zero/soap)
         elif tile == "Flower":
             return "F"
         elif tile == "Joker":
