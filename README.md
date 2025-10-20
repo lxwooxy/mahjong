@@ -44,21 +44,17 @@ pip3 install Pillow
 - **Fedora:** `sudo dnf install python3-tkinter`
 - **macOS:** It should be included with Python from python.org
 
-### 3. Set Up Tile Images
+### 3. Verify Tile Images
 
-Create an `images` folder in the same directory as the Python script:
-
-```bash
-mkdir images
-```
-
-Add your Mahjong tile images to this folder. The images should be named according to this convention:
+The repository should already include an `images` folder with all the necessary Mahjong tile images. Verify that the folder exists and contains the following files:
 - Bamboo tiles: `1bam.png` through `9bam.png`
 - Character tiles: `1crack.png` through `9crack.png`
 - Dot tiles: `1dot.png` through `9dot.png`
 - Wind tiles: `east.png`, `south.png`, `west.png`, `north.png`
 - Dragon tiles: `reddragon.png`, `greendragon.png`, `soap.png`
 - Special tiles: `flower.png`, `joker.png`
+
+**Note:** If the images folder is missing, you'll need to create it and add the tile images with the naming convention above.
 
 ## Running the Application
 
@@ -157,4 +153,4 @@ If you encounter any issues, please check that:
 2. The images folder contains all required tile images
 3. You're using a compatible Python version (3.7+)
 
-Mahjong!!! 🀄
+Enjoy playing Mahjong! 🀄
