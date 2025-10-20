@@ -415,13 +415,12 @@ for s1, s2, s3 in combinations(suits, 3):
         30
     ))
 
-# More runs - will add remaining lines next
 
 class MahjongHelper:
     def __init__(self, root):
         self.root = root
         self.root.title("Mahjong Hand Helper - Official Rules")
-        self.root.geometry("1400x900")
+        self.root.geometry("1920x1080")
         
         # Available tiles
         self.tile_types = []
@@ -606,22 +605,22 @@ class MahjongHelper:
         """Create a button with tile image"""
         img_path = os.path.join("images", self.tile_to_image[tile_name])
         
-        print(f"Attempting to load: {tile_name} from {img_path}")
+        #print(f"Attempting to load: {tile_name} from {img_path}")
         
         try:
             # Check if file exists
             if not os.path.exists(img_path):
-                print(f"  FILE NOT FOUND: {img_path}")
+                #print(f"  FILE NOT FOUND: {img_path}")
                 raise FileNotFoundError(f"Image not found: {img_path}")
             
-            print(f"  File exists, loading...")
+            #print(f"  File exists, loading...")
             # Load and resize image
             img = Image.open(img_path)
-            print(f"  Image opened: {img.size}")
+            #print(f"  Image opened: {img.size}")
             img = img.resize((50, 70), Image.Resampling.LANCZOS)
-            print(f"  Image resized to 50x70")
+            #print(f"  Image resized to 50x70")
             photo = ImageTk.PhotoImage(img)
-            print(f"  PhotoImage created")
+            #print(f"  PhotoImage created")
             
             # Store reference to prevent garbage collection
             self.tile_images[tile_name] = photo
@@ -631,12 +630,12 @@ class MahjongHelper:
                         command=lambda t=tile_name: self.add_tile(t),
                         relief=tk.RAISED, borderwidth=2)
             btn.pack(side=tk.LEFT, padx=2, pady=2)
-            print(f"  SUCCESS: Button created for {tile_name}")
+            #print(f"  SUCCESS: Button created for {tile_name}")
             
         except Exception as e:
-            # Print error for debugging
-            print(f"  ERROR loading image for {tile_name}: {e}")
-            print(f"  Exception type: {type(e).__name__}")
+            # #print error for debugging
+            #print(f"  ERROR loading image for {tile_name}: {e}")
+            #print(f"  Exception type: {type(e).__name__}")
             import traceback
             traceback.print_exc()
             
