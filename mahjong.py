@@ -289,38 +289,34 @@ class MahjongHelper:
         tile_container = tk.Frame(self.hand_frame, bg="white", relief=tk.RAISED, borderwidth=2)
         tile_container.pack(side=tk.LEFT, padx=2, pady=2)
         
-        # Load and display the tile image
         img_path = os.path.join("images", self.tile_to_image[tile_name])
         try:
             img = Image.open(img_path)
-            img = img.resize((50, 70), Image.Resampling.LANCZOS)  # Slightly smaller for hand display
+            img = img.resize((50, 70), Image.Resampling.LANCZOS)
             photo = ImageTk.PhotoImage(img)
             
-            # Create label with image
-            idx = len(self.hand_tile_widgets)
             img_label = tk.Label(tile_container, image=photo, bg="white", cursor="hand2")
-            img_label.image = photo  # Keep a reference
+            img_label.image = photo
             img_label.pack()
-            
-            # Make the tile clickable to remove it
-            img_label.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
-            tile_container.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
-            
-            # Store the container and index
-            self.hand_tile_widgets.append((tile_container, tile_name))
-            
-        except Exception as e:
-            # Fallback to text if image fails
-            idx = len(self.hand_tile_widgets)
-            text_label = tk.Label(tile_container, text=tile_name.split()[0], 
-                                bg="lightgray", width=6, height=4, relief=tk.RAISED, cursor="hand2")
-            text_label.pack()
-            
-            # Make the tile clickable to remove it
-            text_label.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
-            tile_container.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
-            
-            self.hand_tile_widgets.append((tile_container, tile_name))
+        except Exception:
+            img_label = tk.Label(tile_container, text=tile_name.split()[0],
+                                bg="lightgray", width=6, height=4,
+                                relief=tk.RAISED, cursor="hand2")
+            img_label.pack()
+        
+        # Store tuple
+        self.hand_tile_widgets.append((tile_container, tile_name))
+        
+        # Dynamic binding — always finds its current index
+        def on_click(event, container=tile_container):
+            for i, (c, _) in enumerate(self.hand_tile_widgets):
+                if c == container:
+                    self.remove_tile_by_index(i)
+                    break
+        
+        img_label.bind("<Button-1>", on_click)
+        tile_container.bind("<Button-1>", on_click)
+
             
             
     def remove_tile_by_index(self, index):
