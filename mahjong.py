@@ -566,12 +566,13 @@ class MahjongHelper:
                                        font=("Arial", 10, "bold"))
         selected_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Listbox with scrollbar
+        # Listbox with scrollbar (enable multiple selection)
         scroll = tk.Scrollbar(selected_frame)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
         
         self.tiles_listbox = tk.Listbox(selected_frame, yscrollcommand=scroll.set,
-                                        font=("Arial", 12), height=15)
+                                        font=("Arial", 12), height=15, 
+                                        selectmode=tk.EXTENDED)  # Allow multiple selection
         self.tiles_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scroll.config(command=self.tiles_listbox.yview)
         
@@ -640,9 +641,10 @@ class MahjongHelper:
     def remove_tile(self):
         selection = self.tiles_listbox.curselection()
         if selection:
-            idx = selection[0]
-            self.tiles_listbox.delete(idx)
-            self.selected_tiles.pop(idx)
+            # Remove tiles in reverse order to maintain correct indices
+            for idx in reversed(selection):
+                self.tiles_listbox.delete(idx)
+                self.selected_tiles.pop(idx)
     
     def clear_tiles(self):
         self.selected_tiles.clear()
