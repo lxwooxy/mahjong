@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from collections import Counter
 from itertools import combinations
+from PIL import Image, ImageTk
+import os
 
 # Define all possible Mahjong hands based on the official card
 MAHJONG_HANDS = []
@@ -419,7 +421,7 @@ class MahjongHelper:
     def __init__(self, root):
         self.root = root
         self.root.title("Mahjong Hand Helper - Official Rules")
-        self.root.geometry("1000x750")
+        self.root.geometry("1400x900")
         
         # Available tiles
         self.tile_types = []
@@ -429,7 +431,26 @@ class MahjongHelper:
                                "Red Dragon", "Green Dragon", "White Dragon",
                                "Flower", "Joker"])
         
+        # Map tile names to image filenames
+        self.tile_to_image = {
+            "1 Bamboo": "1bam.png", "2 Bamboo": "2bam.png", "3 Bamboo": "3bam.png",
+            "4 Bamboo": "4bam.png", "5 Bamboo": "5bam.png", "6 Bamboo": "6bam.png",
+            "7 Bamboo": "7bam.png", "8 Bamboo": "8bam.png", "9 Bamboo": "9bam.png",
+            "1 Character": "1crack.png", "2 Character": "2crack.png", "3 Character": "3crack.png",
+            "4 Character": "4crack.png", "5 Character": "5crack.png", "6 Character": "6crack.png",
+            "7 Character": "7crack.png", "8 Character": "8crack.png", "9 Character": "9crack.png",
+            "1 Dot": "1dot.png", "2 Dot": "2dot.png", "3 Dot": "3dot.png",
+            "4 Dot": "4dot.png", "5 Dot": "5dot.png", "6 Dot": "6dot.png",
+            "7 Dot": "7dot.png", "8 Dot": "8dot.png", "9 Dot": "9dot.png",
+            "East Wind": "east.png", "South Wind": "south.png", 
+            "West Wind": "west.png", "North Wind": "north.png",
+            "Red Dragon": "reddragon.png", "Green Dragon": "greendragon.png", 
+            "White Dragon": "soap.png",
+            "Flower": "flower.png", "Joker": "joker.png"
+        }
+        
         self.selected_tiles = []
+        self.tile_images = {}  # Store PhotoImage objects
         self.setup_ui()
     
     def setup_ui(self):
@@ -440,139 +461,50 @@ class MahjongHelper:
         
         # Instructions
         instructions = tk.Label(self.root, 
-                               text="Select tiles from your hand, then click 'Find Best Hands' to see top 3 potential scoring hands",
-                               font=("Arial", 10))
+                            text="Click on tiles to add them to your hand, then click 'Find Best Hands'",
+                            font=("Arial", 11))
         instructions.pack(pady=5)
         
         # Main container
         main_frame = tk.Frame(self.root)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Left side - Tile selection
+        # Left side - Tile selection with images
         left_frame = tk.LabelFrame(main_frame, text="Select Your Tiles", 
-                                   font=("Arial", 12, "bold"))
+                                font=("Arial", 12, "bold"))
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
         
-        # Tile selector
-        selector_frame = tk.Frame(left_frame)
-        selector_frame.pack(pady=10, padx=10, fill=tk.X)
+        # Create scrollable frame for tile buttons
+        tile_canvas = tk.Canvas(left_frame)
+        tile_scrollbar = tk.Scrollbar(left_frame, orient="vertical", command=tile_canvas.yview)
+        scrollable_frame = tk.Frame(tile_canvas)
         
-        # Number buttons (1-9, removed 0)
-        number_frame = tk.LabelFrame(selector_frame, text="Numbers", font=("Arial", 11, "bold"))
-        number_frame.pack(fill=tk.X, pady=5)
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: tile_canvas.configure(scrollregion=tile_canvas.bbox("all"))
+        )
         
-        numbers_btn_frame = tk.Frame(number_frame)
-        numbers_btn_frame.pack(pady=5)
+        tile_canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        tile_canvas.configure(yscrollcommand=tile_scrollbar.set)
         
-        for num in range(1, 10):
-            btn = tk.Button(numbers_btn_frame, text=str(num), width=3,
-                           command=lambda n=num: self.add_to_text_field(str(n)),
-                           font=("Arial", 12, "bold"))
-            btn.pack(side=tk.LEFT, padx=2)
+        # Load and display tile images
+        self.load_tile_images(scrollable_frame)
         
-        # Suit buttons
-        suit_frame = tk.LabelFrame(selector_frame, text="Suits", font=("Arial", 11, "bold"))
-        suit_frame.pack(fill=tk.X, pady=5)
-        
-        suits_btn_frame = tk.Frame(suit_frame)
-        suits_btn_frame.pack(pady=5)
-        
-        suits_list = [("Bamboo", "Bamboo"), ("Character", "Character"), ("Dot", "Dot")]
-        for display, value in suits_list:
-            btn = tk.Button(suits_btn_frame, text=display, width=10,
-                           command=lambda v=value: self.add_to_text_field(v),
-                           font=("Arial", 12, "bold"))
-            btn.pack(side=tk.LEFT, padx=2)
-        
-        # Honor tiles buttons
-        honor_frame = tk.LabelFrame(selector_frame, text="Honors", font=("Arial", 11, "bold"))
-        honor_frame.pack(fill=tk.X, pady=5)
-        
-        # Winds
-        winds_label = tk.Label(honor_frame, text="Winds:", font=("Arial", 11))
-        winds_label.pack(anchor=tk.W, padx=5, pady=(5,0))
-        
-        winds_btn_frame = tk.Frame(honor_frame)
-        winds_btn_frame.pack(pady=2)
-        
-        winds = [("East", "East Wind"), ("South", "South Wind"), 
-                ("West", "West Wind"), ("North", "North Wind")]
-        for display, value in winds:
-            btn = tk.Button(winds_btn_frame, text=display, width=8,
-                           command=lambda v=value: self.set_text_field(v),
-                           font=("Arial", 11, "bold"))
-            btn.pack(side=tk.LEFT, padx=2)
-        
-        # Dragons
-        dragons_label = tk.Label(honor_frame, text="Dragons:", font=("Arial", 11))
-        dragons_label.pack(anchor=tk.W, padx=5, pady=(5,0))
-        
-        dragons_btn_frame = tk.Frame(honor_frame)
-        dragons_btn_frame.pack(pady=2)
-        
-        dragons = [("Red", "Red Dragon"), ("Green", "Green Dragon"), 
-                  ("White", "White Dragon")]
-        for display, value in dragons:
-            btn = tk.Button(dragons_btn_frame, text=display, width=8,
-                           command=lambda v=value: self.set_text_field(v),
-                           font=("Arial", 11, "bold"))
-            btn.pack(side=tk.LEFT, padx=2)
-        
-        # Flowers
-        flowers_label = tk.Label(honor_frame, text="Flowers:", font=("Arial", 11))
-        flowers_label.pack(anchor=tk.W, padx=5, pady=(5,0))
-        
-        flowers_btn_frame = tk.Frame(honor_frame)
-        flowers_btn_frame.pack(pady=2)
-        
-        flower_btn = tk.Button(flowers_btn_frame, text="Flower", width=8,
-                              command=lambda: self.set_text_field("Flower"),
-                              font=("Arial", 11, "bold"), bg="#FFB6C1")
-        flower_btn.pack(side=tk.LEFT, padx=2)
-        
-        # Jokers
-        joker_label = tk.Label(honor_frame, text="Jokers:", font=("Arial", 11))
-        joker_label.pack(anchor=tk.W, padx=5, pady=(5,0))
-        
-        joker_btn_frame = tk.Frame(honor_frame)
-        joker_btn_frame.pack(pady=(2,5))
-        
-        joker_btn = tk.Button(joker_btn_frame, text="Joker", width=8,
-                             command=lambda: self.set_text_field("Joker"),
-                             font=("Arial", 11, "bold"), bg="#FFA500")
-        joker_btn.pack(side=tk.LEFT, padx=2)
-        
-        # Text field and add button
-        entry_frame = tk.Frame(selector_frame)
-        entry_frame.pack(fill=tk.X, pady=10)
-        
-        tk.Label(entry_frame, text="Tile:", font=("Arial", 12)).pack(side=tk.LEFT, padx=5)
-        
-        self.tile_entry = tk.Entry(entry_frame, font=("Arial", 12), width=20)
-        self.tile_entry.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        add_btn = tk.Button(entry_frame, text="Add Tile", 
-                           command=self.add_tile_from_entry, bg="#4CAF50", fg="black",
-                           font=("Arial", 12, "bold"), padx=10, pady=5)
-        add_btn.pack(side=tk.LEFT, padx=5)
-        
-        clear_entry_btn = tk.Button(entry_frame, text="Clear", 
-                                    command=self.clear_text_field, bg="#9E9E9E", fg="black",
-                                    font=("Arial", 11), padx=5, pady=5)
-        clear_entry_btn.pack(side=tk.LEFT, padx=2)
+        tile_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+        tile_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Selected tiles display
         selected_frame = tk.LabelFrame(left_frame, text="Your Hand", 
-                                       font=("Arial", 10, "bold"))
-        selected_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                                    font=("Arial", 10, "bold"))
+        selected_frame.pack(fill=tk.X, padx=10, pady=10)
         
         # Listbox with scrollbar (enable multiple selection)
         scroll = tk.Scrollbar(selected_frame)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
         
         self.tiles_listbox = tk.Listbox(selected_frame, yscrollcommand=scroll.set,
-                                        font=("Arial", 12), height=15, 
-                                        selectmode=tk.EXTENDED)  # Allow multiple selection
+                                        font=("Arial", 11), height=8, 
+                                        selectmode=tk.EXTENDED)
         self.tiles_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scroll.config(command=self.tiles_listbox.yview)
         
@@ -581,13 +513,13 @@ class MahjongHelper:
         btn_frame.pack(pady=10)
         
         remove_btn = tk.Button(btn_frame, text="Remove Selected", 
-                              command=self.remove_tile, bg="#f44336", fg="black",
-                              font=("Arial", 11, "bold"), padx=10, pady=5)
+                            command=self.remove_tile, bg="#f44336", fg="black",
+                            font=("Arial", 11, "bold"), padx=10, pady=5)
         remove_btn.pack(side=tk.LEFT, padx=5)
         
         clear_btn = tk.Button(btn_frame, text="Clear All", 
-                             command=self.clear_tiles, bg="#ff9800", fg="black",
-                             font=("Arial", 11, "bold"), padx=10, pady=5)
+                            command=self.clear_tiles, bg="#ff9800", fg="black",
+                            font=("Arial", 11, "bold"), padx=10, pady=5)
         clear_btn.pack(side=tk.LEFT, padx=5)
         
         # Right side - Results
@@ -596,14 +528,128 @@ class MahjongHelper:
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5)
         
         analyze_btn = tk.Button(right_frame, text="Find Best Hands", 
-                               command=self.analyze_hand, bg="#2196F3", fg="black",
-                               font=("Arial", 12, "bold"), padx=15, pady=8)
+                            command=self.analyze_hand, bg="#2196F3", fg="black",
+                            font=("Arial", 12, "bold"), padx=15, pady=8)
         analyze_btn.pack(pady=10)
         
         # Results display
-        self.results_text = tk.Text(right_frame, font=("Arial", 11), 
+        self.results_text = tk.Text(right_frame, font=("Arial", 10), 
                                     wrap=tk.WORD, state=tk.DISABLED)
         self.results_text.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+    def load_tile_images(self, parent):
+        """Load tile images and create buttons"""
+        # Bamboo tiles
+        bam_frame = tk.LabelFrame(parent, text="Bamboo", font=("Arial", 10, "bold"))
+        bam_frame.pack(fill=tk.X, padx=5, pady=5)
+        
+        bam_btn_frame = tk.Frame(bam_frame)
+        bam_btn_frame.pack(pady=5)
+        
+        for i in range(1, 10):
+            tile_name = f"{i} Bamboo"
+            self.create_tile_button(bam_btn_frame, tile_name)
+        
+        # Character tiles
+        char_frame = tk.LabelFrame(parent, text="Character (Crack)", font=("Arial", 10, "bold"))
+        char_frame.pack(fill=tk.X, padx=5, pady=5)
+        
+        char_btn_frame = tk.Frame(char_frame)
+        char_btn_frame.pack(pady=5)
+        
+        for i in range(1, 10):
+            tile_name = f"{i} Character"
+            self.create_tile_button(char_btn_frame, tile_name)
+        
+        # Dot tiles
+        dot_frame = tk.LabelFrame(parent, text="Dot", font=("Arial", 10, "bold"))
+        dot_frame.pack(fill=tk.X, padx=5, pady=5)
+        
+        dot_btn_frame = tk.Frame(dot_frame)
+        dot_btn_frame.pack(pady=5)
+        
+        for i in range(1, 10):
+            tile_name = f"{i} Dot"
+            self.create_tile_button(dot_btn_frame, tile_name)
+        
+        # Winds
+        wind_frame = tk.LabelFrame(parent, text="Winds", font=("Arial", 10, "bold"))
+        wind_frame.pack(fill=tk.X, padx=5, pady=5)
+        
+        wind_btn_frame = tk.Frame(wind_frame)
+        wind_btn_frame.pack(pady=5)
+        
+        for wind in ["East Wind", "South Wind", "West Wind", "North Wind"]:
+            self.create_tile_button(wind_btn_frame, wind)
+        
+        # Dragons
+        dragon_frame = tk.LabelFrame(parent, text="Dragons", font=("Arial", 10, "bold"))
+        dragon_frame.pack(fill=tk.X, padx=5, pady=5)
+        
+        dragon_btn_frame = tk.Frame(dragon_frame)
+        dragon_btn_frame.pack(pady=5)
+        
+        for dragon in ["Red Dragon", "Green Dragon", "White Dragon"]:
+            self.create_tile_button(dragon_btn_frame, dragon)
+        
+        # Special tiles
+        special_frame = tk.LabelFrame(parent, text="Special", font=("Arial", 10, "bold"))
+        special_frame.pack(fill=tk.X, padx=5, pady=5)
+        
+        special_btn_frame = tk.Frame(special_frame)
+        special_btn_frame.pack(pady=5)
+        
+        for special in ["Flower", "Joker"]:
+            self.create_tile_button(special_btn_frame, special)
+
+    def create_tile_button(self, parent, tile_name):
+        """Create a button with tile image"""
+        img_path = os.path.join("images", self.tile_to_image[tile_name])
+        
+        print(f"Attempting to load: {tile_name} from {img_path}")
+        
+        try:
+            # Check if file exists
+            if not os.path.exists(img_path):
+                print(f"  FILE NOT FOUND: {img_path}")
+                raise FileNotFoundError(f"Image not found: {img_path}")
+            
+            print(f"  File exists, loading...")
+            # Load and resize image
+            img = Image.open(img_path)
+            print(f"  Image opened: {img.size}")
+            img = img.resize((50, 70), Image.Resampling.LANCZOS)
+            print(f"  Image resized to 50x70")
+            photo = ImageTk.PhotoImage(img)
+            print(f"  PhotoImage created")
+            
+            # Store reference to prevent garbage collection
+            self.tile_images[tile_name] = photo
+            
+            # Create button with image
+            btn = tk.Button(parent, image=photo, 
+                        command=lambda t=tile_name: self.add_tile(t),
+                        relief=tk.RAISED, borderwidth=2)
+            btn.pack(side=tk.LEFT, padx=2, pady=2)
+            print(f"  SUCCESS: Button created for {tile_name}")
+            
+        except Exception as e:
+            # Print error for debugging
+            print(f"  ERROR loading image for {tile_name}: {e}")
+            print(f"  Exception type: {type(e).__name__}")
+            import traceback
+            traceback.print_exc()
+            
+            # Fallback to text button if image not found
+            btn = tk.Button(parent, text=tile_name.split()[0], 
+                        command=lambda t=tile_name: self.add_tile(t),
+                        width=6, height=3, font=("Arial", 9))
+            btn.pack(side=tk.LEFT, padx=2, pady=2)
+
+    def add_tile(self, tile_name):
+        """Add a tile to the hand"""
+        self.selected_tiles.append(tile_name)
+        self.tiles_listbox.insert(tk.END, tile_name)
     
     def add_to_text_field(self, text):
         current = self.tile_entry.get()
