@@ -50,13 +50,13 @@ for suit in suits:
     MAHJONG_HANDS.append((
         f"NN EEE WWW SS 2025 - {suit}",
         ["North Wind"]*2 + ["East Wind"]*3 + ["West Wind"]*3 + ["South Wind"]*2 + 
-        [f"2 {suit}", f"0 {suit}", f"2 {suit}", f"5 {suit}"],
+        [f"2 {suit}", "White Dragon", f"2 {suit}", f"5 {suit}"],
         30
     ))
     MAHJONG_HANDS.append((
         f"NNN EE WW SSS 2025 - {suit}",
         ["North Wind"]*3 + ["East Wind"]*2 + ["West Wind"]*2 + ["South Wind"]*3 + 
-        [f"2 {suit}", f"0 {suit}", f"2 {suit}", f"5 {suit}"],
+        [f"2 {suit}", "White Dragon", f"2 {suit}", f"5 {suit}"],
         30
     ))
 
@@ -345,7 +345,7 @@ for suit in suits:
 for s1, s2 in combinations(suits, 2):
     MAHJONG_HANDS.append((
         f"FFFF 1111 + 9999 = 10 - {s1}/{s2}",
-        ["Flower"]*4 + [f"1 {s1}"]*4 + [f"9 {s2}"]*4 + [f"1 {s1}"] + [f"0 {s2}"],
+        ["Flower"]*4 + [f"1 {s1}"]*4 + [f"9 {s2}"]*4 + [f"1 {s1}"] + ["White Dragon"],
         25
     ))
 
@@ -423,7 +423,7 @@ class MahjongHelper:
         
         # Available tiles
         self.tile_types = []
-        for i in range(0, 10):  # Added 0 for 2025 hands
+        for i in range(1, 10):  # 1-9 only, no 0
             self.tile_types.extend([f"{i} Bamboo", f"{i} Character", f"{i} Dot"])
         self.tile_types.extend(["East Wind", "South Wind", "West Wind", "North Wind",
                                "Red Dragon", "Green Dragon", "White Dragon",
@@ -457,14 +457,14 @@ class MahjongHelper:
         selector_frame = tk.Frame(left_frame)
         selector_frame.pack(pady=10, padx=10, fill=tk.X)
         
-        # Number buttons (0-9, added 0 for 2025)
+        # Number buttons (1-9, removed 0)
         number_frame = tk.LabelFrame(selector_frame, text="Numbers", font=("Arial", 11, "bold"))
         number_frame.pack(fill=tk.X, pady=5)
         
         numbers_btn_frame = tk.Frame(number_frame)
         numbers_btn_frame.pack(pady=5)
         
-        for num in range(0, 10):
+        for num in range(1, 10):
             btn = tk.Button(numbers_btn_frame, text=str(num), width=3,
                            command=lambda n=num: self.add_to_text_field(str(n)),
                            font=("Arial", 12, "bold"))
