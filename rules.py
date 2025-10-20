@@ -325,12 +325,21 @@ def generate_mahjong_hands():
 
     # FFFF 2025 222 222 (Any 3 Suits, Like Pungs 2s or 5s in Opp. Suits)
     for s1, s2, s3 in combinations(suits, 3):
+        # 2s
         MAHJONG_HANDS.append((
             f"FFFF 2025 222 222 - {s1}/{s2}/{s3}",
             ["Flower"]*4 + [f"2 {s1}", "White Dragon", f"2 {s1}", f"5 {s1}"] + 
             [f"2 {s2}"]*3 + [f"2 {s3}"]*3,
             25
         ))
+        # 5s
+        MAHJONG_HANDS.append((
+            f"FFFF 2025 555 555 - {s1}/{s2}/{s3}",
+            ["Flower"]*4 + [f"5 {s1}", "White Dragon", f"5 {s1}", f"2 {s1}"] + 
+            [f"5 {s2}"]*3 + [f"5 {s3}"]*3,
+            25
+        ))
+
 
     # 222 0000 222 5555 (Any 2 Suits)
     for s1, s2 in combinations(suits, 2):

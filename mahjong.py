@@ -316,6 +316,7 @@ class MahjongHelper:
         
         img_label.bind("<Button-1>", on_click)
         tile_container.bind("<Button-1>", on_click)
+        #print("Added tile:", tile_name)
 
             
             
@@ -393,8 +394,11 @@ class MahjongHelper:
             self.display_results("Please select some tiles first!")
             return
         
+        #print("Analyzing hand:", self.selected_tiles)
+        
         hand_counter = Counter(self.selected_tiles)
         joker_count = hand_counter.get("Joker", 0)
+        
         
         hand_scores = []
         for hand_name, required_tiles, points in self.MAHJONG_HANDS:
@@ -444,6 +448,7 @@ class MahjongHelper:
     
     def format_top_hands(self, top_hands):
         if not top_hands:
+            print("No matching hands found.")
             return "No matching hands found with your current tiles."
         
         result = "TOP 3 POTENTIAL HANDS:\n\n"
