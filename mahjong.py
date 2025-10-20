@@ -394,64 +394,114 @@ class MahjongHelper:
             self.display_results("Please select some tiles first!")
             return
         
-        #print("Analyzing hand:", self.selected_tiles)
-        
         hand_counter = Counter(self.selected_tiles)
         joker_count = hand_counter.get("Joker", 0)
-        
         
         hand_scores = []
         for hand_name, required_tiles, points in self.MAHJONG_HANDS:
             required_counter = Counter(required_tiles)
             
-            matches = 0
-            for tile, count in required_counter.items():
-                matches += min(hand_counter.get(tile, 0), count)
+            # Try the hand as-is first
+            score = self.score_hand(hand_counter, required_counter, joker_count)
             
-            remaining_jokers = joker_count
-            tiles_needed = []
-            
-            for tile, required_count in required_counter.items():
-                have_count = hand_counter.get(tile, 0)
-                needed = required_count - have_count
+            # For hands with 3 suits (s1/s2/s3), try all permutations
+            if " - " in hand_name and ("/" in hand_name.split(" - ")[1]):
+                suits_str = hand_name.split(" - ")[1]
+                suit_list = suits_str.split("/")
                 
-                if needed > 0 and required_count >= 3:
-                    tiles_needed.append((tile, needed, required_count))
+                if len(suit_list) == 3:
+                    # Try all 6 permutations of the 3 suits
+                    from itertools import permutations as suit_permutations
+                    for suit_perm in suit_permutations(suit_list):
+                        # Create a modified required_counter with permuted suits
+                        permuted_counter = self.permute_suit_assignment(
+                            required_counter, suit_list, suit_perm
+                        )
+                        alt_score = self.score_hand(hand_counter, permuted_counter, joker_count)
+                        
+                        # Keep the best score
+                        if alt_score['matches'] > score['matches'] or \
+                        (alt_score['matches'] == score['matches'] and alt_score['jokers_used'] < score['jokers_used']):
+                            score = alt_score
             
-            tiles_needed.sort(key=lambda x: x[2], reverse=True)
-            
-            jokers_used = 0
-            for tile, needed, required_count in tiles_needed:
-                if remaining_jokers > 0:
-                    can_use = min(needed, remaining_jokers)
-                    jokers_used += can_use
-                    remaining_jokers -= can_use
-                    matches += can_use
-            
-            total_required = len(required_tiles)
-            match_percentage = (matches / total_required) * 100
-            
-            if matches > 0:
-                hand_scores.append({
-                    'name': hand_name,
-                    'matches': matches,
-                    'total_required': total_required,
-                    'percentage': match_percentage,
-                    'points': points,
-                    'missing': total_required - matches,
-                    'required_tiles': required_counter,
-                    'jokers_used': jokers_used
-                })
+            if score['matches'] > 0:
+                score['name'] = hand_name
+                score['points'] = points
+                hand_scores.append(score)
         
         hand_scores.sort(key=lambda x: (x['matches'], x['points']), reverse=True)
-        self.display_results(self.format_top_hands(hand_scores[:3]))
+        self.display_results(self.format_top_hands(hand_scores[:5]))
+
+
+    def permute_suit_assignment(self, required_counter, original_suits, new_suits):
+        """
+        Remaps tiles from original suit order to a new suit order.
+        E.g., if original is [Bamboo, Character, Dot] and new is [Character, Dot, Bamboo],
+        all Bamboo tiles become Character, Character becomes Dot, Dot becomes Bamboo.
+        """
+        suit_map = {}
+        for i, original_suit in enumerate(original_suits):
+            suit_map[original_suit] = new_suits[i]
+        
+        permuted = Counter()
+        for tile, count in required_counter.items():
+            if " " in tile:  # Numbered tiles like "2 Bamboo"
+                number, suit = tile.rsplit(" ", 1)
+                if suit in suit_map:
+                    new_tile = f"{number} {suit_map[suit]}"
+                    permuted[new_tile] += count
+                else:
+                    permuted[tile] += count
+            else:  # Winds, Dragons, Flowers
+                permuted[tile] += count
+        
+        return permuted
+
+
+    def score_hand(self, hand_counter, required_counter, joker_count):
+        """Score a hand based on how many tiles match."""
+        matches = 0
+        for tile, count in required_counter.items():
+            matches += min(hand_counter.get(tile, 0), count)
+        
+        remaining_jokers = joker_count
+        tiles_needed = []
+        
+        for tile, required_count in required_counter.items():
+            have_count = hand_counter.get(tile, 0)
+            needed = required_count - have_count
+            
+            if needed > 0 and required_count >= 3:
+                tiles_needed.append((tile, needed, required_count))
+        
+        tiles_needed.sort(key=lambda x: x[2], reverse=True)
+        
+        jokers_used = 0
+        for tile, needed, required_count in tiles_needed:
+            if remaining_jokers > 0:
+                can_use = min(needed, remaining_jokers)
+                jokers_used += can_use
+                remaining_jokers -= can_use
+                matches += can_use
+        
+        total_required = len(required_counter)
+        match_percentage = (matches / total_required) * 100 if total_required > 0 else 0
+        
+        return {
+            'matches': matches,
+            'total_required': total_required,
+            'percentage': match_percentage,
+            'missing': total_required - matches,
+            'required_tiles': required_counter,
+            'jokers_used': jokers_used
+        }
     
     def format_top_hands(self, top_hands):
         if not top_hands:
             print("No matching hands found.")
             return "No matching hands found with your current tiles."
         
-        result = "TOP 3 POTENTIAL HANDS:\n\n"
+        result = "TOP 5 POTENTIAL HANDS:\n\n"
         result += "=" * 60 + "\n\n"
         
         for i, hand in enumerate(top_hands, 1):
@@ -488,12 +538,17 @@ class MahjongHelper:
         return line.strip()
     
     def format_what_you_have(self, required_tiles, hand_counter, jokers_used=0):
+        """Display tiles you have, accounting for mismatches"""
         line = ""
         remaining_jokers = jokers_used
         
         tiles_with_jokers = []
+        unmatched_tiles = dict(hand_counter)  # Track tiles you have
+        
         for tile, required_count in sorted(required_tiles.items()):
             have_count = hand_counter.get(tile, 0)
+            if have_count > 0:
+                del unmatched_tiles[tile]  # Remove matched tiles from unmatched
             
             jokers_for_tile = 0
             if required_count >= 3 and remaining_jokers > 0:
@@ -504,6 +559,7 @@ class MahjongHelper:
             
             tiles_with_jokers.append((tile, required_count, have_count, jokers_for_tile))
         
+        # Display required tiles with what you have
         for tile, required_count, have_count, jokers_for_tile in tiles_with_jokers:
             abbrev = self.get_tile_abbreviation(tile)
             line += abbrev * have_count
@@ -512,7 +568,41 @@ class MahjongHelper:
             line += "_" * missing
             line += " "
         
+        # Display unmatched tiles you have (extras)
+        if unmatched_tiles:
+            line += "| "
+            for tile in sorted(unmatched_tiles.keys()):
+                if tile != "Joker":  # Don't show jokers separately
+                    abbrev = self.get_tile_abbreviation(tile)
+                    count = unmatched_tiles[tile]
+                    line += abbrev * count + " "
+        
         return line.strip()
+
+
+    def format_missing_tiles(self, required_tiles, hand_counter, jokers_used=0):
+        """Show only tiles needed to complete the pattern"""
+        missing = []
+        remaining_jokers = jokers_used
+        
+        for tile, required_count in sorted(required_tiles.items()):
+            have_count = hand_counter.get(tile, 0)
+            needed = required_count - have_count
+            
+            if needed > 0:
+                jokers_for_tile = 0
+                if required_count >= 3 and remaining_jokers > 0:
+                    jokers_for_tile = min(needed, remaining_jokers)
+                    remaining_jokers -= jokers_for_tile
+                
+                still_needed = needed - jokers_for_tile
+                if still_needed > 0:
+                    abbrev = self.get_tile_abbreviation(tile)
+                    missing.append(abbrev * still_needed)
+        
+        if not missing:
+            return "None - You have all tiles!"
+        return " ".join(missing)
     
     def format_missing_tiles(self, required_tiles, hand_counter, jokers_used=0):
         missing = []
