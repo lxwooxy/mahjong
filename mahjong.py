@@ -10,6 +10,35 @@ MAHJONG_HANDS = []
 
 suits = ["Bamboo", "Character", "Dot"]
 
+# ANY LIKE NUMBERS SECTION
+# FF 1111 D 1111 D 11 (Any 3 Suits)
+for num in range(1, 10):
+    for s1, s2, s3 in combinations(suits, 3):
+        MAHJONG_HANDS.append((
+            f"FF {num}{num}{num}{num} D {num}{num}{num}{num} D {num}{num} - {s1}/{s2}/{s3}",
+            ["Flower"]*2 + [f"{num} {s1}"]*4 + ["Red Dragon"] + [f"{num} {s2}"]*4 + 
+            ["Green Dragon"] + [f"{num} {s3}"]*2,
+            25
+        ))
+
+# FFFF 11 111 111 11 (Any 3 Suits, Pairs Must Be Same Suit)
+for num in range(1, 10):
+    for s1, s2, s3 in combinations(suits, 3):
+        MAHJONG_HANDS.append((
+            f"FFFF {num}{num} {num}{num}{num} {num}{num}{num} {num}{num} - {s1}/{s2}/{s3}",
+            ["Flower"]*4 + [f"{num} {s1}"]*2 + [f"{num} {s2}"]*3 + [f"{num} {s3}"]*3 + [f"{num} {s1}"]*2,
+            30
+        ))
+
+# FF 111 111 111 DDD (Any 3 Suits, Any Dragon)
+for num in range(1, 10):
+    for s1, s2, s3 in combinations(suits, 3):
+        MAHJONG_HANDS.append((
+            f"FF {num}{num}{num} {num}{num}{num} {num}{num}{num} DDD - {s1}/{s2}/{s3}",
+            ["Flower"]*2 + [f"{num} {s1}"]*3 + [f"{num} {s2}"]*3 + [f"{num} {s3}"]*3 + ["Red Dragon"]*3,
+            30
+        ))
+
 # WINDS-DRAGONS SECTION
 MAHJONG_HANDS.extend([
     ("NNNN EEEE WWW SSSS", ["North Wind"]*4 + ["East Wind"]*4 + ["West Wind"]*3 + ["South Wind"]*3, 25),
@@ -59,6 +88,83 @@ for suit in suits:
         f"NNN EE WW SSS 2025 - {suit}",
         ["North Wind"]*3 + ["East Wind"]*2 + ["West Wind"]*2 + ["South Wind"]*3 + 
         [f"2 {suit}", "White Dragon", f"2 {suit}", f"5 {suit}"],
+        30
+    ))
+    
+# 2468 SECTION
+# 222 4444 666 8888 (any 1 or 2 suits)
+for suit in suits:
+    MAHJONG_HANDS.append((
+        f"222 4444 666 8888 - {suit}",
+        [f"2 {suit}"]*3 + [f"4 {suit}"]*4 + [f"6 {suit}"]*4 + [f"8 {suit}"]*4,
+        25
+    ))
+
+for s1, s2 in combinations(suits, 2):
+    MAHJONG_HANDS.append((
+        f"222 4444 666 8888 - {s1}/{s2}",
+        [f"2 {s1}"]*3 + [f"4 {s1}"]*4 + [f"6 {s2}"]*4 + [f"8 {s2}"]*4,
+        25
+    ))
+
+# FF 2222 + 4444 = 6666 -or- FF 2222 + 6666 = 8888 (Any 3 Suits)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"FF 2222 + 4444 = 6666 - {s1}/{s2}/{s3}",
+        ["Flower"]*2 + [f"2 {s1}"]*4 + [f"4 {s2}"]*4 + [f"6 {s3}"]*4,
+        25
+    ))
+    MAHJONG_HANDS.append((
+        f"FF 2222 + 6666 = 8888 - {s1}/{s2}/{s3}",
+        ["Flower"]*2 + [f"2 {s1}"]*4 + [f"6 {s2}"]*4 + [f"8 {s3}"]*4,
+        25
+    ))
+
+# 22 444 66 888 DDDD (Any 1 Suit)
+for suit in suits:
+    MAHJONG_HANDS.append((
+        f"22 444 66 888 DDDD - {suit}",
+        [f"2 {suit}"]*2 + [f"4 {suit}"]*3 + [f"6 {suit}"]*2 + [f"8 {suit}"]*3 + ["Red Dragon"]*4,
+        25
+    ))
+
+# FFFF 2468 222 222 (Any 3 Suits, Like Pungs Any Even No.)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"FFFF 2468 222 222 - {s1}/{s2}/{s3}",
+        ["Flower"]*4 + [f"2 {s1}", f"4 {s1}", f"6 {s1}", f"8 {s1}"] + [f"2 {s2}"]*3 + [f"2 {s3}"]*3,
+        25
+    ))
+
+# FFF 22 44 666 8888 (Any 1 Suit)
+for suit in suits:
+    MAHJONG_HANDS.append((
+        f"FFF 22 44 666 8888 - {suit}",
+        ["Flower"]*3 + [f"2 {suit}"]*2 + [f"4 {suit}"]*2 + [f"6 {suit}"]*3 + [f"8 {suit}"]*4,
+        25
+    ))
+
+# 222 4444 666 88 88 (Any 3 Suits, Pairs 8s Only)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"222 4444 666 88 88 - {s1}/{s2}/{s3}",
+        [f"2 {s1}"]*3 + [f"4 {s2}"]*4 + [f"6 {s3}"]*3 + [f"8 {s1}"]*2 + [f"8 {s2}"]*2,
+        25
+    ))
+
+# FF 2222 DDDD 2222 (Any 3 Suits, Like Kongs Any Even No.)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"FF 2222 DDDD 2222 - {s1}/{s2}/{s3}",
+        ["Flower"]*2 + [f"2 {s1}"]*4 + ["Red Dragon"]*4 + [f"2 {s2}"]*4,
+        25
+    ))
+
+# 22 44 66 88 222 222 (Any 3 Suits, Like Pungs Any Even No.)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"22 44 66 88 222 222 - {s1}/{s2}/{s3}",
+        [f"2 {s1}"]*2 + [f"4 {s2}"]*2 + [f"6 {s3}"]*2 + [f"8 {s1}"]*2 + [f"2 {s2}"]*3 + [f"2 {s3}"]*3,
         30
     ))
 
@@ -171,13 +277,51 @@ MAHJONG_HANDS.append((
     50
 ))
 
+# 2025 SECTION
 # FF 2025 2025 2025 (any 3 suits)
 MAHJONG_HANDS.append((
     "FF 2025 2025 2025",
-    ["Flower"]*2 + ["2 Bamboo"]*2 + ["0 Bamboo"]*2 + ["2 Bamboo"]*2 + ["5 Bamboo"]*2 + 
-    ["2 Character"]*2 + ["5 Character"]*2 + ["2 Dot"]*2 + ["5 Dot"]*2,
+    ["Flower"]*2 + 
+    ["2 Bamboo", "White Dragon", "2 Bamboo", "5 Bamboo"] + 
+    ["2 Character", "White Dragon", "2 Character", "5 Character"] + 
+    ["2 Dot", "White Dragon", "2 Dot", "5 Dot"],
     75
 ))
+
+# FFFF 2025 222 222 (Any 3 Suits, Like Pungs 2s or 5s in Opp. Suits)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"FFFF 2025 222 222 - {s1}/{s2}/{s3}",
+        ["Flower"]*4 + [f"2 {s1}", "White Dragon", f"2 {s1}", f"5 {s1}"] + 
+        [f"2 {s2}"]*3 + [f"2 {s3}"]*3,
+        25
+    ))
+
+# 222 0000 222 5555 (Any 2 Suits)
+for s1, s2 in combinations(suits, 2):
+    MAHJONG_HANDS.append((
+        f"222 0000 222 5555 - {s1}/{s2}",
+        [f"2 {s1}"]*3 + ["White Dragon"]*4 + [f"2 {s2}"]*3 + [f"5 {s2}"]*4,
+        25
+    ))
+
+# 2025 222 555 DDDD (Any 3 Suits)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"2025 222 555 DDDD - {s1}/{s2}/{s3}",
+        [f"2 {s1}", "White Dragon", f"2 {s1}", f"5 {s1}"] + 
+        [f"2 {s2}"]*3 + [f"5 {s3}"]*3 + ["Red Dragon"]*4,
+        30
+    ))
+
+# FF 222 000 222 555 (Any 3 Suits)
+for s1, s2, s3 in combinations(suits, 3):
+    MAHJONG_HANDS.append((
+        f"FF 222 000 222 555 - {s1}/{s2}/{s3}",
+        ["Flower"]*2 + [f"2 {s1}"]*3 + ["White Dragon"]*3 + 
+        [f"2 {s2}"]*3 + [f"5 {s3}"]*3,
+        30
+    ))
 
 # QUINTS
 # FF 111 2222 33333
