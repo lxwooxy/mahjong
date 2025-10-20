@@ -469,7 +469,7 @@ class MahjongHelper:
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Configure grid weights for resizing
-        main_frame.grid_columnconfigure(0, weight=6)  # Left gets 3/4
+        main_frame.grid_columnconfigure(0, weight=5)  # Left gets 3/4
         main_frame.grid_columnconfigure(1, weight=1)  # Right gets 1/4
         main_frame.grid_rowconfigure(0, weight=1)
         
@@ -485,10 +485,10 @@ class MahjongHelper:
         # === LEFT HALF TOP: Tile Selection ===
         tile_selection_frame = tk.LabelFrame(left_half, text="Select Your Tiles", 
                                             font=("Arial", 12, "bold"))
-        tile_selection_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=(0, 5))
+        tile_selection_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False, pady=(0, 5))
         
         # Create scrollable frame for tile buttons
-        tile_canvas = tk.Canvas(tile_selection_frame)
+        tile_canvas = tk.Canvas(tile_selection_frame, height=450)
         tile_scrollbar = tk.Scrollbar(tile_selection_frame, orient="vertical", command=tile_canvas.yview)
         scrollable_frame = tk.Frame(tile_canvas)
         
@@ -512,7 +512,7 @@ class MahjongHelper:
         hand_section.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=False, pady=(5, 0))
         
         # Create canvas for scrollable hand display
-        self.hand_canvas = tk.Canvas(hand_section, height=120, bg="white")
+        self.hand_canvas = tk.Canvas(hand_section, height=160, bg="white")
         hand_scrollbar = tk.Scrollbar(hand_section, orient="horizontal", 
                                     command=self.hand_canvas.xview)
         self.hand_frame = tk.Frame(self.hand_canvas, bg="white")
@@ -557,18 +557,18 @@ class MahjongHelper:
         container = tk.Frame(parent)
         container.pack(fill=tk.BOTH, expand=True)
         
-        # Left column for Bamboo, Character, Dot
+        # Left column for Bamboo, Character, Dot, Dragons
         left_column = tk.Frame(container)
         left_column.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
         
-        # Right column for Winds, Dragons, Special
+        # Right column for Winds and Special
         right_column = tk.Frame(container)
         right_column.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=5)
         
         # === LEFT COLUMN ===
         # Bamboo tiles
         bam_frame = tk.LabelFrame(left_column, text="Bamboo", font=("Arial", 10, "bold"))
-        bam_frame.pack(fill=tk.X, padx=5, pady=5)
+        bam_frame.pack(fill=tk.X, padx=5, pady=2)
         
         bam_btn_frame = tk.Frame(bam_frame)
         bam_btn_frame.pack(pady=5)
@@ -579,7 +579,7 @@ class MahjongHelper:
         
         # Character tiles
         char_frame = tk.LabelFrame(left_column, text="Character (Crack)", font=("Arial", 10, "bold"))
-        char_frame.pack(fill=tk.X, padx=5, pady=5)
+        char_frame.pack(fill=tk.X, padx=5, pady=2)
         
         char_btn_frame = tk.Frame(char_frame)
         char_btn_frame.pack(pady=5)
@@ -590,7 +590,7 @@ class MahjongHelper:
         
         # Dot tiles
         dot_frame = tk.LabelFrame(left_column, text="Dot", font=("Arial", 10, "bold"))
-        dot_frame.pack(fill=tk.X, padx=5, pady=5)
+        dot_frame.pack(fill=tk.X, padx=5, pady=2)
         
         dot_btn_frame = tk.Frame(dot_frame)
         dot_btn_frame.pack(pady=5)
@@ -598,6 +598,16 @@ class MahjongHelper:
         for i in range(1, 10):
             tile_name = f"{i} Dot"
             self.create_tile_button(dot_btn_frame, tile_name)
+        
+        # Dragons 
+        dragon_frame = tk.LabelFrame(left_column, text="Dragons", font=("Arial", 10, "bold"))
+        dragon_frame.pack(fill=tk.X, padx=5, pady=2)
+        
+        dragon_btn_frame = tk.Frame(dragon_frame)
+        dragon_btn_frame.pack(pady=5)
+        
+        for dragon in ["Red Dragon", "Green Dragon", "White Dragon"]:
+            self.create_tile_button(dragon_btn_frame, dragon)
         
         # === RIGHT COLUMN ===
         # Winds in NEWS configuration
@@ -626,16 +636,6 @@ class MahjongHelper:
         south_frame = tk.Frame(wind_grid)
         south_frame.grid(row=2, column=1, padx=2, pady=2)
         self.create_tile_button(south_frame, "South Wind")
-        
-        # Dragons
-        dragon_frame = tk.LabelFrame(right_column, text="Dragons", font=("Arial", 10, "bold"))
-        dragon_frame.pack(fill=tk.X, padx=5, pady=5)
-        
-        dragon_btn_frame = tk.Frame(dragon_frame)
-        dragon_btn_frame.pack(pady=5)
-        
-        for dragon in ["Red Dragon", "Green Dragon", "White Dragon"]:
-            self.create_tile_button(dragon_btn_frame, dragon)
         
         # Special tiles
         special_frame = tk.LabelFrame(right_column, text="Special", font=("Arial", 10, "bold"))
@@ -695,44 +695,40 @@ class MahjongHelper:
         """Add a tile to the hand with image display"""
         self.selected_tiles.append(tile_name)
         
-        # Create a frame for this tile (image + remove button)
-        tile_container = tk.Frame(self.hand_frame, bg="white")
+        # Create a frame for this tile
+        tile_container = tk.Frame(self.hand_frame, bg="white", relief=tk.RAISED, borderwidth=2)
         tile_container.pack(side=tk.LEFT, padx=2, pady=2)
         
         # Load and display the tile image
         img_path = os.path.join("images", self.tile_to_image[tile_name])
         try:
             img = Image.open(img_path)
-            img = img.resize((40, 56), Image.Resampling.LANCZOS)  # Slightly smaller for hand display
+            img = img.resize((50, 70), Image.Resampling.LANCZOS)  # Slightly smaller for hand display
             photo = ImageTk.PhotoImage(img)
             
             # Create label with image
-            img_label = tk.Label(tile_container, image=photo, bg="white", 
-                                relief=tk.RAISED, borderwidth=1)
+            idx = len(self.hand_tile_widgets)
+            img_label = tk.Label(tile_container, image=photo, bg="white", cursor="hand2")
             img_label.image = photo  # Keep a reference
             img_label.pack()
             
-            # Add a small remove button below the tile
-            idx = len(self.hand_tile_widgets)
-            remove_btn = tk.Button(tile_container, text="×", font=("Arial", 8, "bold"),
-                                command=lambda i=idx: self.remove_tile_by_index(i),
-                                bg="#ff5252", fg="white", width=4, height=1)
-            remove_btn.pack()
+            # Make the tile clickable to remove it
+            img_label.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
+            tile_container.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
             
             # Store the container and index
             self.hand_tile_widgets.append((tile_container, tile_name))
             
         except Exception as e:
             # Fallback to text if image fails
+            idx = len(self.hand_tile_widgets)
             text_label = tk.Label(tile_container, text=tile_name.split()[0], 
-                                bg="lightgray", width=6, height=4, relief=tk.RAISED)
+                                bg="lightgray", width=6, height=4, relief=tk.RAISED, cursor="hand2")
             text_label.pack()
             
-            idx = len(self.hand_tile_widgets)
-            remove_btn = tk.Button(tile_container, text="×", font=("Arial", 8, "bold"),
-                                command=lambda i=idx: self.remove_tile_by_index(i),
-                                bg="#ff5252", fg="white", width=4)
-            remove_btn.pack()
+            # Make the tile clickable to remove it
+            text_label.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
+            tile_container.bind("<Button-1>", lambda e, i=idx: self.remove_tile_by_index(i))
             
             self.hand_tile_widgets.append((tile_container, tile_name))
             
