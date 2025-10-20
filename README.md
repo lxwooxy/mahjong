@@ -16,7 +16,7 @@ Open your terminal (Mac/Linux) or Command Prompt (Windows) and run:
 
 ```bash
 git clone <repository-url>
-cd mahjong-helper
+cd mahjong
 ```
 
 Replace `<repository-url>` with the actual URL of this repository.
@@ -135,7 +135,7 @@ python3 mahjong.py
 ## Project Structure
 
 ```
-mahjong-helper/
+mahjong/
 │
 ├── mahjong.py    # Main application file
 ├── images/              # Folder containing tile images
