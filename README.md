@@ -84,9 +84,8 @@ python3 mahjong.py
    - Tiles are listed in the order you selected them
 
 ### 3. **Remove Tiles (if needed)**
-   - Click on one or more tiles in the "Your Hand" listbox to select them
-   - Click the **"Remove Selected"** button to remove specific tiles
-   - Click the **"Clear All"** button to start over
+   - Click on each tile in the "Your Hand" listbox to remove them
+   - Click the **"Clear All"** button to remove all tiles and start over
 
 ### 4. **Find Best Hands**
    - Once you've selected your tiles, click the **"Find Best Hands"** button
