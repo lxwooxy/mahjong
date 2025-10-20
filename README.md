@@ -133,16 +133,16 @@ python3 mahjong.py
 - Check that tkinter is installed (try importing it in Python: `python -c "import tkinter"`)
 
 ## Project Structure
-
 ```
 mahjong/
 │
-├── mahjong.py    # Main application file
-├── images/              # Folder containing tile images
+├── mahjong.py          # Main application file (GUI)
+├── rules.py            # Mahjong hand definitions and rules
+├── images/             # Folder containing tile images
 │   ├── 1bam.png
 │   ├── 2bam.png
 │   └── ... (all tile images)
-└── README.md           # This file
+└── README.md          # This file
 ```
 
 ## Support
