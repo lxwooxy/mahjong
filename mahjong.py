@@ -563,7 +563,7 @@ for s1, s2, s3 in combinations(suits, 3):
 class MahjongHelper:
     def __init__(self, root):
         self.root = root
-        self.root.title("Mahjong Hand Helper - Official Rules")
+        self.root.title("Mahjong - Lock In!")
         self.root.geometry("1920x1080")
         
         # Available tiles
@@ -598,7 +598,7 @@ class MahjongHelper:
     
     def setup_ui(self):
         # Title
-        title = tk.Label(self.root, text="Mahjong Hand Helper - Official Rules", 
+        title = tk.Label(self.root, text="Mahjong Hand Helper", 
                         font=("Arial", 18, "bold"))
         title.pack(pady=10)
         
