@@ -427,7 +427,18 @@ class MahjongHelper:
             if score['matches'] > 0:
                 score['name'] = hand_name
                 score['points'] = points
-                hand_scores.append(score)
+                # Only add to results if it's a unique hand/score combo (avoid duplicates with different permutations)
+                # If already 100% complete, skip similar hands with different permutations
+                is_duplicate = False
+                if score['matches'] == score['total_required']:
+                    for existing in hand_scores:
+                        if existing['matches'] == existing['total_required'] and \
+                        existing['points'] == score['points'] and \
+                        existing['name'].split(" - ")[0] == hand_name.split(" - ")[0]:
+                            is_duplicate = True
+                            break
+                if not is_duplicate:
+                    hand_scores.append(score)
         
         hand_scores.sort(key=lambda x: (x['matches'], x['points']), reverse=True)
         self.display_results(self.format_top_hands(hand_scores[:5]))
@@ -459,10 +470,31 @@ class MahjongHelper:
 
 
     def score_hand(self, hand_counter, required_counter, joker_count):
-        """Score a hand based on how many tiles match."""
+        """Score a hand based on how many tiles match, allowing suit substitution for numbered tiles."""
         matches = 0
+        used_hand_tiles = Counter()
+        
         for tile, count in required_counter.items():
-            matches += min(hand_counter.get(tile, 0), count)
+            exact_match = hand_counter.get(tile, 0) - used_hand_tiles.get(tile, 0)
+            matches += min(exact_match, count)
+            used_hand_tiles[tile] += min(exact_match, count)
+            
+            # If no exact match and it's a numbered tile, check other suits
+            if exact_match < count and " " in tile:
+                number, suit = tile.rsplit(" ", 1)
+                needed = count - exact_match
+                # Find how many of this number we have in other suits
+                for hand_tile, hand_count in hand_counter.items():
+                    if " " in hand_tile:
+                        hand_number, hand_suit = hand_tile.rsplit(" ", 1)
+                        if hand_number == number and hand_suit != suit:
+                            available = hand_count - used_hand_tiles.get(hand_tile, 0)
+                            used = min(available, needed)
+                            matches += used
+                            used_hand_tiles[hand_tile] += used
+                            needed -= used
+                            if needed == 0:
+                                break
         
         remaining_jokers = joker_count
         tiles_needed = []
@@ -484,7 +516,8 @@ class MahjongHelper:
                 remaining_jokers -= can_use
                 matches += can_use
         
-        total_required = len(required_counter)
+        # Total required is the SUM of all tile counts
+        total_required = sum(required_counter.values())
         match_percentage = (matches / total_required) * 100 if total_required > 0 else 0
         
         return {
@@ -517,14 +550,15 @@ class MahjongHelper:
             result += self.format_line_pattern(hand['required_tiles'])
             result += "\n\n"
             
-            result += "What You Have:\n"
-            hand_counter = Counter(self.selected_tiles)
-            result += self.format_what_you_have(hand['required_tiles'], hand_counter, hand.get('jokers_used', 0))
-            result += "\n\n"
-            
-            result += "Missing:\n"
-            result += self.format_missing_tiles(hand['required_tiles'], hand_counter, hand.get('jokers_used', 0))
-            result += "\n"
+            if hand['matches'] < hand['total_required']:
+                result += "What You Have:\n"
+                hand_counter = Counter(self.selected_tiles)
+                result += self.format_what_you_have(hand['required_tiles'], hand_counter, hand.get('jokers_used', 0))
+                result += "\n\n"
+
+                result += "Missing:\n"
+                result += self.format_missing_tiles(hand['required_tiles'], hand_counter, hand.get('jokers_used', 0))
+                result += "\n"
             
             result += "\n" + "-" * 60 + "\n\n"
         
