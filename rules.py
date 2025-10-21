@@ -131,7 +131,7 @@ def generate_mahjong_hands():
     for suit in suits:
         MAHJONG_HANDS.append((
             f"222 4444 666 8888 - {suit}",
-            [f"2 {suit}"]*3 + [f"4 {suit}"]*4 + [f"6 {suit}"]*4 + [f"8 {suit}"]*4,
+            [f"2 {suit}"]*3 + [f"4 {suit}"]*4 + [f"6 {suit}"]*3 + [f"8 {suit}"]*4,
             25
         ))
 

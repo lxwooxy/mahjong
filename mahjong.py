@@ -440,8 +440,10 @@ class MahjongHelper:
                 if not is_duplicate:
                     hand_scores.append(score)
         
-        hand_scores.sort(key=lambda x: (x['matches'], x['points']), reverse=True)
+        # Sort by: completion status (100% first), then points (highest first), then matches
+        hand_scores.sort(key=lambda x: (-int(x['matches'] == x['total_required']), -x['points'], -x['matches']))
         self.display_results(self.format_top_hands(hand_scores[:5]))
+
 
 
     def permute_suit_assignment(self, required_counter, original_suits, new_suits):
