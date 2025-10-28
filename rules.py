@@ -335,7 +335,7 @@ def generate_mahjong_hands():
         # 5s
         MAHJONG_HANDS.append((
             f"FFFF 2025 555 555 - {s1}/{s2}/{s3}",
-            ["Flower"]*4 + [f"5 {s1}", "White Dragon", f"5 {s1}", f"2 {s1}"] + 
+            ["Flower"]*4 + [f"2 {s1}", "White Dragon", f"2 {s1}", f"5 {s1}"] + 
             [f"5 {s2}"]*3 + [f"5 {s3}"]*3,
             25
         ))

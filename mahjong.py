@@ -410,6 +410,9 @@ class MahjongHelper:
                 suit_list = suits_str.split("/")
                 
                 if len(suit_list) == 3:
+                    if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
+                        print("Trying permutations for hand:", hand_name)
+
                     # Try all 6 permutations of the 3 suits
                     from itertools import permutations as suit_permutations
                     for suit_perm in suit_permutations(suit_list):
@@ -417,11 +420,17 @@ class MahjongHelper:
                         permuted_counter = self.permute_suit_assignment(
                             required_counter, suit_list, suit_perm
                         )
+                        if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
+                            print("  Testing permutation:", suit_perm)
                         alt_score = self.score_hand(hand_counter, permuted_counter, joker_count)
                         
+                        if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
+                            print("    Alt Score:", alt_score)
+
                         # Keep the best score
                         if alt_score['matches'] > score['matches'] or \
                         (alt_score['matches'] == score['matches'] and alt_score['jokers_used'] < score['jokers_used']):
+                            #print("  New best permutation found:", suit_perm, "Score:", alt_score, "Original Score:", score)
                             score = alt_score
             
             if score['matches'] > 0:
@@ -441,7 +450,7 @@ class MahjongHelper:
                     hand_scores.append(score)
         
         # Sort by: completion status (100% first), then points (highest first), then matches
-        hand_scores.sort(key=lambda x: (-int(x['matches'] == x['total_required']), -x['points'], -x['matches']))
+        hand_scores.sort(key=lambda x: (-int(x['matches'] == x['total_required']), -x['percentage'], -x['points']))
         self.display_results(self.format_top_hands(hand_scores[:5]))
 
 
@@ -481,23 +490,7 @@ class MahjongHelper:
             matches += min(exact_match, count)
             used_hand_tiles[tile] += min(exact_match, count)
             
-            # If no exact match and it's a numbered tile, check other suits
-            if exact_match < count and " " in tile:
-                number, suit = tile.rsplit(" ", 1)
-                needed = count - exact_match
-                # Find how many of this number we have in other suits
-                for hand_tile, hand_count in hand_counter.items():
-                    if " " in hand_tile:
-                        hand_number, hand_suit = hand_tile.rsplit(" ", 1)
-                        if hand_number == number and hand_suit != suit:
-                            available = hand_count - used_hand_tiles.get(hand_tile, 0)
-                            used = min(available, needed)
-                            matches += used
-                            used_hand_tiles[hand_tile] += used
-                            needed -= used
-                            if needed == 0:
-                                break
-        
+            
         remaining_jokers = joker_count
         tiles_needed = []
         
