@@ -415,7 +415,7 @@ def generate_mahjong_hands():
         ))
         MAHJONG_HANDS.append((
             f"55 666 7777 888 99 - {suit}",
-            [f"5 {suit}"]*2 + [f"6 {suit}"]*3 + [f"7 {suit}"]*4 + [f"8 {suit}"]*4 + [f"9 {suit}"],
+            [f"5 {suit}"]*2 + [f"6 {suit}"]*3 + [f"7 {suit}"]*4 + [f"8 {suit}"]*3 + [f"9 {suit}"]*2,
             25
         ))
 
