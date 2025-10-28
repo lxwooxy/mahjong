@@ -576,8 +576,6 @@ class MahjongHelper:
         
         for tile, required_count in sorted(required_tiles.items()):
             have_count = hand_counter.get(tile, 0)
-            if have_count > 0:
-                del unmatched_tiles[tile]  # Remove matched tiles from unmatched
             
             jokers_for_tile = 0
             if required_count >= 3 and remaining_jokers > 0:
@@ -587,21 +585,29 @@ class MahjongHelper:
                     remaining_jokers -= jokers_for_tile
             
             tiles_with_jokers.append((tile, required_count, have_count, jokers_for_tile))
+            
+            # Remove matched portion from unmatched_tiles, keep excess
+            if tile in unmatched_tiles:
+                used_count = min(have_count, required_count)
+                unmatched_tiles[tile] = have_count - used_count
+                if unmatched_tiles[tile] == 0:
+                    del unmatched_tiles[tile]
         
         # Display required tiles with what you have
         for tile, required_count, have_count, jokers_for_tile in tiles_with_jokers:
             abbrev = self.get_tile_abbreviation(tile)
-            line += abbrev * have_count
+            used_count = min(have_count, required_count)
+            line += abbrev * used_count
             line += "J" * jokers_for_tile
-            missing = required_count - have_count - jokers_for_tile
+            missing = required_count - used_count - jokers_for_tile
             line += "_" * missing
             line += " "
         
-        # Display unmatched tiles you have (extras)
+        # Display unmatched tiles you have (extras or completely unneeded)
         if unmatched_tiles:
             line += "| "
             for tile in sorted(unmatched_tiles.keys()):
-                if tile != "Joker":  # Don't show jokers separately
+                if tile != "Joker":
                     abbrev = self.get_tile_abbreviation(tile)
                     count = unmatched_tiles[tile]
                     line += abbrev * count + " "

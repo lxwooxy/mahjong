@@ -80,15 +80,26 @@ def generate_mahjong_hands():
         ("NNN EEEE WWWW SSS", ["North Wind"]*3 + ["East Wind"]*4 + ["West Wind"]*4 + ["South Wind"]*3, 25),
     ])
 
-    # Add variations for FF 123 DD DDD DDDD (any 3 consecutive in any suit, any 3 dragons)
+    # Add variations for FF 123 DD DDD DDDD (any 3 consecutive in any suit, any 2, 3, and 4 dragons)
     for suit in suits:
         for start in range(1, 8):  # 1-7 start positions for consecutive
-            MAHJONG_HANDS.append((
-                f"FF {start}{start+1}{start+2} DDD DDD DDD - {suit}",
-                ["Flower"]*2 + [f"{start} {suit}", f"{start+1} {suit}", f"{start+2} {suit}"] + 
-                ["Red Dragon"]*3 + ["Green Dragon"]*3 + ["White Dragon"]*3,
-                25
-            ))
+            # Generate all ways to distribute 2, 3, 4 among the three dragon types
+            dragon_distributions = [
+                (2, 3, 4),  # RD=2, GD=3, WD=4
+                (2, 4, 3),  # RD=2, GD=4, WD=3
+                (3, 2, 4),  # RD=3, GD=2, WD=4
+                (3, 4, 2),  # RD=3, GD=4, WD=2
+                (4, 2, 3),  # RD=4, GD=2, WD=3
+                (4, 3, 2),  # RD=4, GD=3, WD=2
+            ]
+            
+            for rd_count, gd_count, wd_count in dragon_distributions:
+                MAHJONG_HANDS.append((
+                    f"FF {start}{start+1}{start+2} DD DDD DDDD - {suit}",
+                    ["Flower"]*2 + [f"{start} {suit}", f"{start+1} {suit}", f"{start+2} {suit}"] + 
+                    ["Red Dragon"]*rd_count + ["Green Dragon"]*gd_count + ["White Dragon"]*wd_count,
+                    25
+                ))
 
     MAHJONG_HANDS.extend([
         ("FFF NN EE WWW SSSS", ["Flower"]*3 + ["North Wind"]*2 + ["East Wind"]*2 + ["West Wind"]*3 + ["South Wind"]*4, 25),
