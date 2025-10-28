@@ -360,14 +360,16 @@ def generate_mahjong_hands():
             25
         ))
 
-    # 2025 222 555 DDDD (Any 3 Suits)
-    for s1, s2, s3 in combinations(suits, 3):
-        MAHJONG_HANDS.append((
-            f"2025 222 555 DDDD - {s1}/{s2}/{s3}",
-            [f"2 {s1}", "White Dragon", f"2 {s1}", f"5 {s1}"] + 
-            [f"2 {s2}"]*3 + [f"5 {s3}"]*3 + ["Red Dragon"]*4,
-            30
-        ))
+
+    # 2025 222 555 DDDD (2025 in suit1 with soap as 0, 222 and 555 in suit2, 4 of any dragon)
+        for s1, s2 in permutations(suits, 2):
+            for dragon_pung in dragons:
+                MAHJONG_HANDS.append((
+                    f"2025 222 555 DDDD - {s1}/{s2}",
+                    [f"2 {s1}", "White Dragon", f"2 {s1}", f"5 {s1}"] + 
+                    [f"2 {s2}"]*3 + [f"5 {s2}"]*3 + [dragon_pung]*4,
+                    30
+                ))
 
     # FF 222 000 222 555 (Any 3 Suits)
     for s1, s2, s3 in combinations(suits, 3):
