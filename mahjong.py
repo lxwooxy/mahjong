@@ -410,8 +410,8 @@ class MahjongHelper:
                 suit_list = suits_str.split("/")
                 
                 if len(suit_list) == 3:
-                    if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
-                        print("Trying permutations for hand:", hand_name)
+                    # if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
+                    #     print("Trying permutations for hand:", hand_name)
 
                     # Try all 6 permutations of the 3 suits
                     from itertools import permutations as suit_permutations
@@ -420,12 +420,12 @@ class MahjongHelper:
                         permuted_counter = self.permute_suit_assignment(
                             required_counter, suit_list, suit_perm
                         )
-                        if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
-                            print("  Testing permutation:", suit_perm)
+                        # if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
+                        #     print("  Testing permutation:", suit_perm)
                         alt_score = self.score_hand(hand_counter, permuted_counter, joker_count)
                         
-                        if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
-                            print("    Alt Score:", alt_score)
+                        # if hand_name == "FFFF 2025 555 555 - Bamboo/Character/Dot":
+                        #     print("    Alt Score:", alt_score)
 
                         # Keep the best score
                         if alt_score['matches'] > score['matches'] or \
