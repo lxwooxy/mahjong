@@ -539,7 +539,7 @@ def generate_mahjong_hands():
             ))
 
     # 13579 SECTION
-    # 11 333 5555 777 99 -or- 11 333 5555 777 99 (any 1 or 3 suits)
+    # 11 333 5555 777 99 (any 1 suit OR 3 suits: 1&3 in s1, 5 in s2, 7&9 in s3)
     for suit in suits:
         MAHJONG_HANDS.append((
             f"11 333 5555 777 99 - {suit}",
@@ -550,7 +550,7 @@ def generate_mahjong_hands():
     for s1, s2, s3 in combinations(suits, 3):
         MAHJONG_HANDS.append((
             f"11 333 5555 777 99 - {s1}/{s2}/{s3}",
-            [f"1 {s1}"]*2 + [f"3 {s2}"]*3 + [f"5 {s3}"]*4 + [f"7 {s1}"]*3 + [f"9 {s2}"]*2,
+            [f"1 {s1}"]*2 + [f"3 {s1}"]*3 + [f"5 {s2}"]*4 + [f"7 {s3}"]*3 + [f"9 {s3}"]*2,
             25
         ))
 
