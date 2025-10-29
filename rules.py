@@ -176,11 +176,12 @@ def generate_mahjong_hands():
 
     # FFFF 2468 222 222 (Any 3 Suits, Like Pungs Any Even No.)
     for s1, s2, s3 in combinations(suits, 3):
-        MAHJONG_HANDS.append((
-            f"FFFF 2468 222 222 - {s1}/{s2}/{s3}",
-            ["Flower"]*4 + [f"2 {s1}", f"4 {s1}", f"6 {s1}", f"8 {s1}"] + [f"2 {s2}"]*3 + [f"2 {s3}"]*3,
-            25
-        ))
+        for even in [2, 4, 6, 8]:
+            MAHJONG_HANDS.append((
+                f"FFFF 2468 {even}{even}{even} {even}{even}{even} - {s1}/{s2}/{s3}",
+                ["Flower"]*4 + [f"2 {s1}", f"4 {s1}", f"6 {s1}", f"8 {s1}"] + [f"{even} {s2}"]*3 + [f"{even} {s3}"]*3,
+                25
+            ))
 
     # FFF 22 44 666 8888 (Any 1 Suit)
     for suit in suits:
@@ -190,11 +191,11 @@ def generate_mahjong_hands():
             25
         ))
 
-    # 222 4444 666 88 88 (Any 3 Suits, Pairs 8s Only)
+    # 222 4444 666 88 88 (Any 3 Suits, 2/4/6 in suit1, first pair 8s in suit2, second pair 8s in suit3)
     for s1, s2, s3 in combinations(suits, 3):
         MAHJONG_HANDS.append((
             f"222 4444 666 88 88 - {s1}/{s2}/{s3}",
-            [f"2 {s1}"]*3 + [f"4 {s2}"]*4 + [f"6 {s3}"]*3 + [f"8 {s1}"]*2 + [f"8 {s2}"]*2,
+            [f"2 {s1}"]*3 + [f"4 {s1}"]*4 + [f"6 {s1}"]*3 + [f"8 {s2}"]*2 + [f"8 {s3}"]*2,
             25
         ))
 
@@ -208,11 +209,12 @@ def generate_mahjong_hands():
 
     # 22 44 66 88 222 222 (Any 3 Suits, Like Pungs Any Even No.)
     for s1, s2, s3 in combinations(suits, 3):
-        MAHJONG_HANDS.append((
-            f"22 44 66 88 222 222 - {s1}/{s2}/{s3}",
-            [f"2 {s1}"]*2 + [f"4 {s2}"]*2 + [f"6 {s3}"]*2 + [f"8 {s1}"]*2 + [f"2 {s2}"]*3 + [f"2 {s3}"]*3,
-            30
-        ))
+        for even in [2, 4, 6, 8]:
+            MAHJONG_HANDS.append((
+                f"22 44 66 88 {even}{even}{even} {even}{even}{even} - {s1}/{s2}/{s3}",
+                [f"2 {s1}"]*2 + [f"4 {s1}"]*2 + [f"6 {s1}"]*2 + [f"8 {s1}"]*2 + [f"{even} {s2}"]*3 + [f"{even} {s3}"]*3,
+                30
+            ))
 
     # Kong Any Dragon
     MAHJONG_HANDS.extend([
