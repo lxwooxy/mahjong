@@ -516,13 +516,13 @@ def generate_mahjong_hands():
                     [f"{start} {suit}"]*3 + [f"{start+1} {suit}"]*3 + [f"{start+2} {suit}"]*4 + [d1]*2 + [d2]*2,
                     30
                 ))
-    # 112345 1111 1111 (any 5 consec, pair any no in run, kongs match pair)
-    for suit in suits:
+    # 112345 1111 1111 (any 5 consec in one suit, two kongs in two other suits, kongs match the pair number)
+    for s1, s2, s3 in combinations(suits, 3):
         for start in range(1, 6):
             MAHJONG_HANDS.append((
-                f"{start}{start}{start+1}{start+2}{start+3}{start+4} {start}{start}{start}{start} {start}{start}{start}{start} - {suit}",
-                [f"{start} {suit}"]*2 + [f"{start+1} {suit}"] + [f"{start+2} {suit}"] + 
-                [f"{start+3} {suit}"] + [f"{start+4} {suit}"] + [f"{start} {suit}"]*4 + [f"{start} {suit}"]*4,
+                f"{start}{start}{start+1}{start+2}{start+3}{start+4} {start}{start}{start}{start} {start}{start}{start}{start} - {s1}/{s2}/{s3}",
+                [f"{start} {s1}"]*2 + [f"{start+1} {s1}"] + [f"{start+2} {s1}"] + 
+                [f"{start+3} {s1}"] + [f"{start+4} {s1}"] + [f"{start} {s2}"]*4 + [f"{start} {s3}"]*4,
                 30
             ))
 
