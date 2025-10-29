@@ -459,6 +459,16 @@ def generate_mahjong_hands():
                 25
             ))
 
+    # FFF 123 4444 5555 (any 3 suits, any 5 consecutive numbers)
+    for s1, s2, s3 in combinations(suits, 3):
+        for start in range(1, 6):  # 1-5 for 5 consecutive (1-2-3-4-5 through 5-6-7-8-9)
+            MAHJONG_HANDS.append((
+                f"FFF {start}{start+1}{start+2} {start+3}{start+3}{start+3}{start+3} {start+4}{start+4}{start+4}{start+4} - {s1}/{s2}/{s3}",
+                ["Flower"]*3 + [f"{start} {s1}", f"{start+1} {s1}", f"{start+2} {s1}"] + 
+                [f"{start+3} {s2}"]*4 + [f"{start+4} {s3}"]*4,
+                25
+            ))
+    
 
     # FFF 111 22 33333 (any 3 suits, any 5 consec)
     for s1, s2, s3 in combinations(suits, 3):
