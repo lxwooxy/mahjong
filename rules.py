@@ -479,12 +479,20 @@ def generate_mahjong_hands():
                 25
             ))
 
-    # FFF 1 222 3333 DDD (any 1 suit, any 3 consec)
+    # FF 11 222 3333 DDD (any 1 suit, any 3 consec, matching dragon)
     for suit in suits:
         for start in range(1, 8):
+            # Determine which dragon matches the suit
+            if suit == "Character":
+                dragon = "Red Dragon"
+            elif suit == "Dot":
+                dragon = "White Dragon"
+            else:  # Bamboo
+                dragon = "Green Dragon"
+            
             MAHJONG_HANDS.append((
-                f"FFF {start} {start+1}{start+1}{start+1} {start+2}{start+2}{start+2}{start+2} DDD - {suit}",
-                ["Flower"]*3 + [f"{start} {suit}"] + [f"{start+1} {suit}"]*3 + [f"{start+2} {suit}"]*4 + ["Red Dragon"]*3,
+                f"FF {start}{start} {start+1}{start+1}{start+1} {start+2}{start+2}{start+2}{start+2} DDD - {suit}",
+                ["Flower"]*2 + [f"{start} {suit}"]*2 + [f"{start+1} {suit}"]*3 + [f"{start+2} {suit}"]*4 + [dragon]*3,
                 25
             ))
 
