@@ -496,15 +496,26 @@ def generate_mahjong_hands():
                 25
             ))
 
-    # 111 222 3333 DD DD (any 3 suits, any 3 consec with opp dragons)
-    for s1, s2, s3 in combinations(suits, 3):
+    # 111 222 3333 DD DD (any 1 suit for consec numbers, with 2 opp dragons)
+    for suit in suits:
         for start in range(1, 8):
-            MAHJONG_HANDS.append((
-                f"{start}{start}{start} {start+1}{start+1}{start+1} {start+2}{start+2}{start+2}{start+2} DD DD - {s1}/{s2}/{s3}",
-                [f"{start} {s1}"]*3 + [f"{start+1} {s2}"]*3 + [f"{start+2} {s3}"]*4 + ["Red Dragon"]*2 + ["White Dragon"]*2,
-                30
-            ))
-
+            # Get dragons that don't match the suit used
+            available_dragons = []
+            
+            if suit != "Character":
+                available_dragons.append("Red Dragon")
+            if suit != "Bamboo":
+                available_dragons.append("Green Dragon")
+            if suit != "Dot":
+                available_dragons.append("White Dragon")
+            
+            # Generate all combinations of 2 pairs from available dragons
+            for d1, d2 in combinations(available_dragons, 2):
+                MAHJONG_HANDS.append((
+                    f"{start}{start}{start} {start+1}{start+1}{start+1} {start+2}{start+2}{start+2}{start+2} DD DD - {suit}",
+                    [f"{start} {suit}"]*3 + [f"{start+1} {suit}"]*3 + [f"{start+2} {suit}"]*4 + [d1]*2 + [d2]*2,
+                    30
+                ))
     # 112345 1111 1111 (any 5 consec, pair any no in run, kongs match pair)
     for suit in suits:
         for start in range(1, 6):
