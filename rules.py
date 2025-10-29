@@ -441,7 +441,7 @@ def generate_mahjong_hands():
                 25
             ))
 
-    # FFFF 1111 22 3333 -or- FF 111 22 3333 (any 1 or 3 suits, any 3 consec)
+    # FFFF 1111 22 3333 -or- FFFF 111 22 3333 (any 1 or 3 suits, any 3 consec)
     for suit in suits:
         for start in range(1, 8):
             MAHJONG_HANDS.append((
@@ -453,10 +453,11 @@ def generate_mahjong_hands():
     for s1, s2, s3 in combinations(suits, 3):
         for start in range(1, 8):
             MAHJONG_HANDS.append((
-                f"FF {start}{start}{start} {start+1}{start+1} {start+2}{start+2}{start+2}{start+2} - {s1}/{s2}/{s3}",
-                ["Flower"]*2 + [f"{start} {s1}"]*3 + [f"{start+1} {s2}"]*2 + [f"{start+2} {s3}"]*4,
+                f"FFFF {start}{start}{start}{start} {start+1}{start+1} {start+2}{start+2}{start+2}{start+2} - {s1}/{s2}/{s3}",
+                ["Flower"]*4 + [f"{start} {s1}"]*4 + [f"{start+1} {s2}"]*2 + [f"{start+2} {s3}"]*4,
                 25
             ))
+
 
     # FFF 111 22 33333 (any 3 suits, any 5 consec)
     for s1, s2, s3 in combinations(suits, 3):
