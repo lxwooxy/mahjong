@@ -149,7 +149,7 @@ def generate_mahjong_hands():
     for s1, s2 in combinations(suits, 2):
         MAHJONG_HANDS.append((
             f"222 4444 666 8888 - {s1}/{s2}",
-            [f"2 {s1}"]*3 + [f"4 {s1}"]*4 + [f"6 {s2}"]*4 + [f"8 {s2}"]*4,
+            [f"2 {s1}"]*3 + [f"4 {s1}"]*4 + [f"6 {s2}"]*3 + [f"8 {s2}"]*4,
             25
         ))
 
