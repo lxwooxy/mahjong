@@ -2,7 +2,7 @@
 
 A Python application that helps you identify the best possible Mahjong hands from your current tiles based on official rules. This tool displays tiles visually and suggests the top 3 potential hands you can form.
 
-## I'll be so real with you tkinter is fun for quick and dirty apps for myself but
+## I'll be so real with you tkinter is fun for quick and dirty prototypes but:
 
 Here's a web script version as well (you can skip the rest of this README now) https://lxwooxy.github.io/mahjong.html
 
