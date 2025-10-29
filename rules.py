@@ -403,12 +403,12 @@ def generate_mahjong_hands():
                     45
                 ))
 
-    # FF 11111 11 11111
+    # FF 11111 11 11111 (three different suits required)
     for num in range(1, 10):
-        for s1, s2 in combinations(suits, 2):
+        for s1, s2, s3 in combinations(suits, 3):
             MAHJONG_HANDS.append((
-                f"FF {num}{num}{num}{num}{num} {num}{num} {num}{num}{num}{num}{num} - {s1}/{s2}",
-                ["Flower"]*2 + [f"{num} {s1}"]*5 + [f"{num} {s2}"]*2 + [f"{num} {s1}"]*5,
+                f"FF {num}{num}{num}{num}{num} {num}{num} {num}{num}{num}{num}{num} - {s1}/{s2}/{s3}",
+                ["Flower"]*2 + [f"{num} {s1}"]*5 + [f"{num} {s2}"]*2 + [f"{num} {s3}"]*5,
                 45
             ))
 
