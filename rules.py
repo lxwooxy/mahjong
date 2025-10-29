@@ -68,11 +68,12 @@ def generate_mahjong_hands():
     # FF 111 111 111 DDD (Any 3 Suits, Any Dragon)
     for num in range(1, 10):
         for s1, s2, s3 in combinations(suits, 3):
-            MAHJONG_HANDS.append((
-                f"FF {num}{num}{num} {num}{num}{num} {num}{num}{num} DDD - {s1}/{s2}/{s3}",
-                ["Flower"]*2 + [f"{num} {s1}"]*3 + [f"{num} {s2}"]*3 + [f"{num} {s3}"]*3 + ["Red Dragon"]*3,
-                30
-            ))
+            for dragon in dragons:
+                MAHJONG_HANDS.append((
+                    f"FF {num}{num}{num} {num}{num}{num} {num}{num}{num} DDD - {s1}/{s2}/{s3}",
+                    ["Flower"]*2 + [f"{num} {s1}"]*3 + [f"{num} {s2}"]*3 + [f"{num} {s3}"]*3 + [dragon]*3,
+                    30
+                ))
 
     # WINDS-DRAGONS SECTION
     MAHJONG_HANDS.extend([
