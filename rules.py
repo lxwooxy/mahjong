@@ -393,14 +393,15 @@ def generate_mahjong_hands():
                 40
             ))
 
-    # 11111 NNNN 22222
+    # 11111 WWWW 22222 (any wind)
     for suit in suits:
         for start in range(1, 9):
-            MAHJONG_HANDS.append((
-                f"{start}{start}{start}{start}{start} NNNN {start+1}{start+1}{start+1}{start+1}{start+1} - {suit}",
-                [f"{start} {suit}"]*5 + ["North Wind"]*4 + [f"{start+1} {suit}"]*5,
-                45
-            ))
+            for wind in ["North Wind", "East Wind", "West Wind", "South Wind"]:
+                MAHJONG_HANDS.append((
+                    f"{start}{start}{start}{start}{start} WWWW {start+1}{start+1}{start+1}{start+1}{start+1} - {suit}",
+                    [f"{start} {suit}"]*5 + [wind]*4 + [f"{start+1} {suit}"]*5,
+                    45
+                ))
 
     # FF 11111 11 11111
     for num in range(1, 10):
