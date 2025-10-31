@@ -613,16 +613,31 @@ def generate_mahjong_hands():
             25
         ))
 
-    # 111 333 5555 DD DD -or- 555 777 9999 DD DD (any 3 suits w opp dragons)
+    # 111 333 5555 DD DD -or- 555 777 9999 DD DD (numbers in s1, dragons match s2 and s3)
     for s1, s2, s3 in combinations(suits, 3):
+        # Determine dragons for s2 and s3
+        if s2 == "Character":
+            dragon2 = "Red Dragon"
+        elif s2 == "Dot":
+            dragon2 = "White Dragon"
+        else:  # Bamboo
+            dragon2 = "Green Dragon"
+        
+        if s3 == "Character":
+            dragon3 = "Red Dragon"
+        elif s3 == "Dot":
+            dragon3 = "White Dragon"
+        else:  # Bamboo
+            dragon3 = "Green Dragon"
+        
         MAHJONG_HANDS.append((
             f"111 333 5555 DD DD - {s1}/{s2}/{s3}",
-            [f"1 {s1}"]*3 + [f"3 {s2}"]*3 + [f"5 {s3}"]*4 + ["Red Dragon"]*2 + ["White Dragon"]*2,
+            [f"1 {s1}"]*3 + [f"3 {s1}"]*3 + [f"5 {s1}"]*4 + [dragon2]*2 + [dragon3]*2,
             30
         ))
         MAHJONG_HANDS.append((
             f"555 777 9999 DD DD - {s1}/{s2}/{s3}",
-            [f"5 {s1}"]*3 + [f"7 {s2}"]*3 + [f"9 {s3}"]*4 + ["Red Dragon"]*2 + ["White Dragon"]*2,
+            [f"5 {s1}"]*3 + [f"7 {s1}"]*3 + [f"9 {s1}"]*4 + [dragon2]*2 + [dragon3]*2,
             30
         ))
 
