@@ -102,10 +102,19 @@ def generate_mahjong_hands():
                     25
                 ))
 
-    MAHJONG_HANDS.extend([
-        ("FFF NN EE WWW SSSS", ["Flower"]*3 + ["North Wind"]*2 + ["East Wind"]*2 + ["West Wind"]*3 + ["South Wind"]*4, 25),
-        ("FFFF DDD NEWS DDD", ["Flower"]*4 + ["Red Dragon"]*3 + ["North Wind"] + ["East Wind"] + ["West Wind"] + ["South Wind"] + ["Green Dragon"]*3, 25),
-    ])
+    MAHJONG_HANDS.append((
+        "FFF NN EE WWW SSSS",
+        ["Flower"]*3 + ["North Wind"]*2 + ["East Wind"]*2 + ["West Wind"]*3 + ["South Wind"]*4,
+        25
+    ))
+
+    # FFFF DDD NEWS DDD (any 2 different dragons)
+    for d1, d2 in combinations(dragons, 2):
+        MAHJONG_HANDS.append((
+            "FFFF DDD NEWS DDD",
+            ["Flower"]*4 + [d1]*3 + ["North Wind"] + ["East Wind"] + ["West Wind"] + ["South Wind"] + [d2]*3,
+            25
+        ))
 
     # Like Odd Numbers in 3 Suits (NNNN 1 11 111 SSSS)
     for odd in [1, 3, 5, 7, 9]:
