@@ -598,7 +598,7 @@ def generate_mahjong_hands():
                     25
                 ))
 
-    # FFF 135 7777 9999 -or- FFF 135 7777 9999 (any 1 or 3 suits)
+    # FFF 135 7777 9999 (any 1 suit OR 3 suits: 135 in s1, 7777 in s2, 9999 in s3)
     for suit in suits:
         MAHJONG_HANDS.append((
             f"FFF 135 7777 9999 - {suit}",
@@ -609,7 +609,7 @@ def generate_mahjong_hands():
     for s1, s2, s3 in combinations(suits, 3):
         MAHJONG_HANDS.append((
             f"FFF 135 7777 9999 - {s1}/{s2}/{s3}",
-            ["Flower"]*3 + [f"1 {s1}"] + [f"3 {s2}"] + [f"5 {s3}"] + [f"7 {s1}"]*4 + [f"9 {s2}"]*4,
+            ["Flower"]*3 + [f"1 {s1}"] + [f"3 {s1}"] + [f"5 {s1}"] + [f"7 {s2}"]*4 + [f"9 {s3}"]*4,
             25
         ))
 
