@@ -663,12 +663,12 @@ def generate_mahjong_hands():
     for s1, s2, s3 in combinations(suits, 3):
         MAHJONG_HANDS.append((
             f"FF 11 33 111 333 55 - {s1}/{s2}/{s3}",
-            ["Flower"]*2 + [f"1 {s1}"]*2 + [f"3 {s2}"]*2 + [f"1 {s1}"]*3 + [f"3 {s2}"]*3 + [f"5 {s3}"]*2,
+            ["Flower"]*2 + [f"1 {s1}"]*2 + [f"3 {s1}"]*2 + [f"1 {s2}"]*3 + [f"3 {s2}"]*3 + [f"5 {s3}"]*2,
             30
         ))
         MAHJONG_HANDS.append((
             f"FF 55 77 555 777 99 - {s1}/{s2}/{s3}",
-            ["Flower"]*2 + [f"5 {s1}"]*2 + [f"7 {s2}"]*2 + [f"5 {s1}"]*3 + [f"7 {s2}"]*3 + [f"9 {s3}"]*2,
+            ["Flower"]*2 + [f"5 {s1}"]*2 + [f"7 {s1}"]*2 + [f"5 {s2}"]*3 + [f"7 {s2}"]*3 + [f"9 {s3}"]*2,
             30
         ))
 
