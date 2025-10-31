@@ -588,13 +588,15 @@ def generate_mahjong_hands():
             25
         ))
 
-    # FFFF 1111 + 9999 = 10 (any 2 suits, these nos only)
-    for s1, s2 in combinations(suits, 2):
-        MAHJONG_HANDS.append((
-            f"FFFF 1111 + 9999 = 10 - {s1}/{s2}",
-            ["Flower"]*4 + [f"1 {s1}"]*4 + [f"9 {s2}"]*4 + [f"1 {s1}"] + ["White Dragon"],
-            25
-        ))
+    # FFFF 1111 + 9999 = 10 (1111 and 9999 in s1, the final 1+0 can be any other suit)
+    for s1 in suits:
+        for s2 in suits:
+            if s1 != s2:
+                MAHJONG_HANDS.append((
+                    f"FFFF 1111 + 9999 = 10 - {s1}/{s2}",
+                    ["Flower"]*4 + [f"1 {s1}"]*4 + [f"9 {s1}"]*4 + [f"1 {s2}"] + ["White Dragon"],
+                    25
+                ))
 
     # FFF 135 7777 9999 -or- FFF 135 7777 9999 (any 1 or 3 suits)
     for suit in suits:
