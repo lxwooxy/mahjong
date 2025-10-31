@@ -77,7 +77,7 @@ def generate_mahjong_hands():
 
     # WINDS-DRAGONS SECTION
     MAHJONG_HANDS.extend([
-        ("NNNN EEEE WWW SSSS", ["North Wind"]*4 + ["East Wind"]*4 + ["West Wind"]*3 + ["South Wind"]*3, 25),
+        ("NNNN EEEE WWW SSSS", ["North Wind"]*4 + ["East Wind"]*3 + ["West Wind"]*3 + ["South Wind"]*4, 25),
         ("NNN EEEE WWWW SSS", ["North Wind"]*3 + ["East Wind"]*4 + ["West Wind"]*4 + ["South Wind"]*3, 25),
     ])
 
