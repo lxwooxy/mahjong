@@ -638,7 +638,7 @@ def generate_mahjong_hands():
         )) 
     
     # 11 333 NEWS 333 55 -or- 55 777 NEWS 777 99 (any 2 suits)
-    for s1, s2 in combinations(suits, 2):
+    for s1, s2 in permutations(suits, 2):
         MAHJONG_HANDS.append((
             f"11 333 NEWS 333 55 - {s1}/{s2}",
             [f"1 {s1}"]*2 + [f"3 {s1}"]*3 + ["North Wind"] + ["East Wind"] + ["West Wind"] + ["South Wind"] + 
@@ -651,7 +651,6 @@ def generate_mahjong_hands():
             [f"7 {s2}"]*3 + [f"9 {s2}"]*2,
             30
         ))
-
     # 1111 33 55 77 9999 (any 2 suits)
     for s1, s2 in combinations(suits, 2):
         MAHJONG_HANDS.append((
