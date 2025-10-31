@@ -118,19 +118,21 @@ def generate_mahjong_hands():
 
     # Like Odd Numbers in 3 Suits (NNNN 1 11 111 SSSS)
     for odd in [1, 3, 5, 7, 9]:
-        MAHJONG_HANDS.append((
-            f"NNNN {odd} {odd}{odd} {odd}{odd}{odd} SSSS",
-            ["North Wind"]*4 + [f"{odd} Bamboo"] + [f"{odd} Character"]*2 + [f"{odd} Dot"]*3 + ["South Wind"]*4,
-            25
-        ))
+        for s1, s2, s3 in permutations(suits, 3):
+            MAHJONG_HANDS.append((
+                f"NNNN {odd} {odd}{odd} {odd}{odd}{odd} SSSS",
+                ["North Wind"]*4 + [f"{odd} {s1}"] + [f"{odd} {s2}"]*2 + [f"{odd} {s3}"]*3 + ["South Wind"]*4,
+                25
+            ))
 
     # Like Even Numbers in 3 Suits (EEEE 2 22 222 WWWW)
     for even in [2, 4, 6, 8]:
-        MAHJONG_HANDS.append((
-            f"EEEE {even} {even}{even} {even}{even}{even} WWWW",
-            ["East Wind"]*4 + [f"{even} Bamboo"] + [f"{even} Character"]*2 + [f"{even} Dot"]*3 + ["West Wind"]*4,
-            25
-        ))
+        for s1, s2, s3 in permutations(suits, 3):
+            MAHJONG_HANDS.append((
+                f"EEEE {even} {even}{even} {even}{even}{even} WWWW",
+                ["East Wind"]*4 + [f"{even} {s1}"] + [f"{even} {s2}"]*2 + [f"{even} {s3}"]*3 + ["West Wind"]*4,
+                25
+            ))
 
     # 2025 variations
     for suit in suits:
