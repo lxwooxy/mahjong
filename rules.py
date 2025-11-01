@@ -253,24 +253,43 @@ def generate_mahjong_hands():
             25
         ))
 
-    # FF 3333+6666=9999 (need all three groups)
-    for s1, s2 in combinations(suits, 2):
+    # FF 3333+6666=9999 (all in 1 suit OR 3s in s1, 6s in s2, 9s in s3)
+    # Option 1: All in 1 suit
+    for suit in suits:
         MAHJONG_HANDS.append((
-            f"FF 3333+6666=9999 - {s1}/{s2}",
-            ["Flower"]*2 + [f"3 {s1}"]*4 + [f"6 {s1}"]*4 + [f"9 {s2}"]*4,
+            f"FF 3333+6666=9999 - {suit}",
+            ["Flower"]*2 + [f"3 {suit}"]*4 + [f"6 {suit}"]*4 + [f"9 {suit}"]*4,
             25
         ))
+
+    # Option 2: 3s in s1, 6s in s2, 9s in s3
+    for s1, s2, s3 in combinations(suits, 3):
         MAHJONG_HANDS.append((
-            f"FF 3333+6666=9999 - {s2}/{s1}",
-            ["Flower"]*2 + [f"3 {s2}"]*4 + [f"6 {s2}"]*4 + [f"9 {s1}"]*4,
+            f"FF 3333+6666=9999 - {s1}/{s2}/{s3}",
+            ["Flower"]*2 + [f"3 {s1}"]*4 + [f"6 {s2}"]*4 + [f"9 {s3}"]*4,
             25
         ))
 
     # 3333 DDD 3333 DDD (matching dragons with kongs)
-    for s1, s2 in combinations(suits, 2):
+    for s1, s2 in permutations(suits, 2):
+        # Determine dragons for each suit
+        if s1 == "Character":
+            dragon1 = "Red Dragon"
+        elif s1 == "Dot":
+            dragon1 = "White Dragon"
+        else:  # Bamboo
+            dragon1 = "Green Dragon"
+        
+        if s2 == "Character":
+            dragon2 = "Red Dragon"
+        elif s2 == "Dot":
+            dragon2 = "White Dragon"
+        else:  # Bamboo
+            dragon2 = "Green Dragon"
+        
         MAHJONG_HANDS.append((
             f"3333 DDD 3333 DDD - {s1}/{s2}",
-            [f"3 {s1}"]*4 + ["Red Dragon"]*3 + [f"3 {s2}"]*4 + ["Green Dragon"]*3,
+            [f"3 {s1}"]*4 + [dragon1]*3 + [f"3 {s2}"]*4 + [dragon2]*3,
             25
         ))
 
