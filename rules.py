@@ -332,22 +332,38 @@ def generate_mahjong_hands():
             ))
 
     # FF 2468 DD 2468 DD (any 2 suits with matching dragons)
-    for s1, s2 in combinations(suits, 2):
+    for s1, s2 in permutations(suits, 2):
+        # Determine dragons for each suit
+        if s1 == "Character":
+            dragon1 = "Red Dragon"
+        elif s1 == "Dot":
+            dragon1 = "White Dragon"
+        else:  # Bamboo
+            dragon1 = "Green Dragon"
+        
+        if s2 == "Character":
+            dragon2 = "Red Dragon"
+        elif s2 == "Dot":
+            dragon2 = "White Dragon"
+        else:  # Bamboo
+            dragon2 = "Green Dragon"
+        
         MAHJONG_HANDS.append((
             f"FF 2468 DD 2468 DD - {s1}/{s2}",
-            ["Flower"]*2 + [f"2 {s1}"]*2 + [f"4 {s1}"]*2 + [f"6 {s1}"]*2 + [f"8 {s1}"]*2 + 
-            ["Red Dragon"]*2 + [f"2 {s2}"]*2 + [f"4 {s2}"]*2 + [f"6 {s2}"]*2 + [f"8 {s2}"]*2 + ["White Dragon"]*2,
+            ["Flower"]*2 + [f"2 {s1}", f"4 {s1}", f"6 {s1}", f"8 {s1}"] + 
+            [dragon1]*2 + [f"2 {s2}", f"4 {s2}", f"6 {s2}", f"8 {s2}"] + [dragon2]*2,
             50
         ))
 
-    # 336699 336699 33 (pairs 3,6,9 in third suit)
+    # 336699 336699 33/66/99 (pairs 3,6,9 in s1 and s2, final pair of 3/6/9 in s3)
     for s1, s2, s3 in combinations(suits, 3):
-        MAHJONG_HANDS.append((
-            f"336699 336699 33 - {s1}/{s2}/{s3}",
-            [f"3 {s1}"]*2 + [f"3 {s2}"]*2 + [f"6 {s1}"]*2 + [f"6 {s2}"]*2 + 
-            [f"9 {s1}"]*2 + [f"9 {s2}"]*2 + [f"3 {s3}"]*2,
-            50
-        ))
+        for final_pair in [3, 6, 9]:
+            MAHJONG_HANDS.append((
+                f"336699 336699 {final_pair}{final_pair} - {s1}/{s2}/{s3}",
+                [f"3 {s1}"]*2 + [f"3 {s2}"]*2 + [f"6 {s1}"]*2 + [f"6 {s2}"]*2 + 
+                [f"9 {s1}"]*2 + [f"9 {s2}"]*2 + [f"{final_pair} {s3}"]*2,
+                50
+            ))
 
     # FF 11 22 11 22 11 22 (any 3 suits, any 2 consec)
     for start in range(1, 9):
@@ -359,14 +375,17 @@ def generate_mahjong_hands():
                 50
             ))
 
-    # Pairs odd numbers in opposite suits
-    MAHJONG_HANDS.append((
-        "11 33 55 77 99 11 11",
-        ["1 Bamboo"]*2 + ["3 Character"]*2 + ["5 Bamboo"]*2 + ["5 Dot"]*2 + 
-        ["7 Character"]*2 + ["9 Bamboo"]*2 + ["1 Dot"]*2,
-        50
-    ))
-
+    # 11 33 55 77 99 XX XX (pairs of all odds in s1, two additional pairs of any odd in s2 and s3)
+    for s1 in suits:
+        for s2, s3 in combinations([s for s in suits if s != s1], 2):
+            for odd2 in [1, 3, 5, 7, 9]:
+                for odd3 in [1, 3, 5, 7, 9]:
+                    MAHJONG_HANDS.append((
+                        f"11 33 55 77 99 {odd2}{odd2} {odd3}{odd3} - {s1}/{s2}/{s3}",
+                        [f"1 {s1}"]*2 + [f"3 {s1}"]*2 + [f"5 {s1}"]*2 + [f"7 {s1}"]*2 + [f"9 {s1}"]*2 + 
+                        [f"{odd2} {s2}"]*2 + [f"{odd3} {s3}"]*2,
+                        50
+                    ))
     # 2025 SECTION
     # FF 2025 2025 2025 (any 3 suits)
     MAHJONG_HANDS.append((
