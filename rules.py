@@ -302,13 +302,14 @@ def generate_mahjong_hands():
                 25
             ))
 
-    # 33 66 99 3333 3333 (like kongs 3, 6 or 9)
+    # 33 66 99 3333 3333 (pairs 33 66 99 in s1, two kongs of 3/6/9 in s2 and s3)
     for s1, s2, s3 in combinations(suits, 3):
-        MAHJONG_HANDS.append((
-            f"33 66 99 3333 3333 - {s1}/{s2}/{s3}",
-            [f"3 {s1}"]*2 + [f"6 {s2}"]*2 + [f"9 {s3}"]*2 + [f"3 {s1}"]*4 + [f"3 {s2}"]*4,
-            25
-        ))
+        for kong_num in [3, 6, 9]:
+            MAHJONG_HANDS.append((
+                f"33 66 99 {kong_num}{kong_num}{kong_num}{kong_num} {kong_num}{kong_num}{kong_num}{kong_num} - {s1}/{s2}/{s3}",
+                [f"3 {s1}"]*2 + [f"6 {s1}"]*2 + [f"9 {s1}"]*2 + [f"{kong_num} {s2}"]*4 + [f"{kong_num} {s3}"]*4,
+                25
+            ))
 
     # FF 333 D 666 D 999 D
     for s1, s2, s3 in combinations(suits, 3):
