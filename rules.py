@@ -293,13 +293,14 @@ def generate_mahjong_hands():
             25
         ))
 
-    # FFF 3333 369 9999
-    for suit in suits:
-        MAHJONG_HANDS.append((
-            f"FFF 3333 369 9999 - {suit}",
-            ["Flower"]*3 + [f"3 {suit}"]*4 + [f"3 {suit}", f"6 {suit}", f"9 {suit}"] + [f"9 {suit}"]*4,
-            25
-        ))
+    # FFF 3333 369 9999 (kongs in s1, middle 369 in any suit)
+    for s1 in suits:
+        for s2 in suits:
+            MAHJONG_HANDS.append((
+                f"FFF 3333 369 9999 - {s1}/{s2}",
+                ["Flower"]*3 + [f"3 {s1}"]*4 + [f"3 {s2}", f"6 {s2}", f"9 {s2}"] + [f"9 {s1}"]*4,
+                25
+            ))
 
     # 33 66 99 3333 3333 (like kongs 3, 6 or 9)
     for s1, s2, s3 in combinations(suits, 3):
