@@ -236,11 +236,20 @@ def generate_mahjong_hands():
     ])
 
     # 369 SECTION
-    # 333 6666 666 9999 (different suits for different colors)
+    # 333 6666 666 9999 (option 1: 2 suits, option 2: 3 suits)
+    # Option 1: 333 6666 in s1, 666 9999 in s2
+    for s1, s2 in permutations(suits, 2):
+        MAHJONG_HANDS.append((
+            f"333 6666 666 9999 - {s1}/{s2}",
+            [f"3 {s1}"]*3 + [f"6 {s1}"]*4 + [f"6 {s2}"]*3 + [f"9 {s2}"]*4,
+            25
+        ))
+
+    # Option 2: 333 6666 in s1, 666 in s2, 9999 in s3
     for s1, s2, s3 in combinations(suits, 3):
         MAHJONG_HANDS.append((
-            f"333 6666 666 9999 - {s1}/{s2}/{s3}",
-            [f"3 {s1}"]*3 + [f"6 {s2}"]*4 + [f"6 {s2}"]*2 + [f"9 {s3}"]*4 + [f"9 {s3}"],
+            f"333 6666 666 9999 - {s1}/{s2}/${s3}",
+            [f"3 {s1}"]*3 + [f"6 {s1}"]*4 + [f"6 {s2}"]*3 + [f"9 {s3}"]*4,
             25
         ))
 
